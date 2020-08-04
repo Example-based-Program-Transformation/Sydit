@@ -1,0 +1,59 @@
+package changeassistant.crystal;
+
+import org.eclipse.jdt.core.dom.ITypeBinding;
+
+import edu.cmu.cs.crystal.tac.model.IVariableVisitor;
+import edu.cmu.cs.crystal.tac.model.Variable;
+
+public class FieldVariable extends Variable {
+
+	private Variable objectAccessed;
+
+	private String fieldName;
+
+	public FieldVariable(Variable objectAccessed, String fieldName) {
+		this.objectAccessed = objectAccessed;
+		this.fieldName = fieldName;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof FieldVariable))
+			return false;
+		FieldVariable other = (FieldVariable) obj;
+		if (other.objectAccessed == null && this.objectAccessed != null
+				|| other.objectAccessed != null && this.objectAccessed == null)
+			return false;
+		if (other.objectAccessed == null && this.objectAccessed == null) {
+			// do nothing
+		} else if (!other.objectAccessed.equals(this.objectAccessed))
+			return false;
+		if (!other.fieldName.equals(this.fieldName))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		if (this.objectAccessed == null)
+			return this.fieldName.hashCode();
+		return this.objectAccessed.hashCode() * 100 + this.fieldName.hashCode();
+	}
+
+	@Override
+	public ITypeBinding resolveType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> T dispatch(IVariableVisitor<T> visitor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return objectAccessed.getSourceString() + "." + fieldName;
+	}
+}

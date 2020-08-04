@@ -1,0 +1,355 @@
+//motif
+public DropTarget(Control control, int style) {
+	super (control, checkStyle(style));
+	this.control = control;
+	if (DropProc == null || DragProc == null || TransferProc == null) {
+		DND.error(DND.ERROR_CANNOT_INIT_DROP);
+	}
+	if (control.getData(DROPTARGETID) != null) {
+		DND.error(DND.ERROR_CANNOT_INIT_DROP);
+	}
+	control.setData(DROPTARGETID, this);
+
+	controlListener = new Listener () {
+		public void handleEvent (Event event) {
+			switch (event.type) {
+				case SWT.Dispose: {
+					if (!DropTarget.this.isDisposed()){
+						onDispose();
+					}
+					break;
+				}
+				case SWT.Show: {
+					if (!registered) {
+						registerDropTarget();
+					} else {
+						int[] args = new int[]{OS.XmNdropSiteActivity,   OS.XmDROP_SITE_ACTIVE,};
+						OS.XmDropSiteUpdate(DropTarget.this.control.handle, args, args.length/2);
+						if (DropTarget.this.control instanceof Label) {
+							int formHandle = OS.XtParent (DropTarget.this.control.handle);
+							OS.XmDropSiteUpdate(formHandle, args, args.length / 2);
+						}
+					}
+					break;
+				}
+				case SWT.Hide: {
+					int[] args = new int[]{OS.XmNdropSiteActivity,   OS.XmDROP_SITE_INACTIVE,};
+					OS.XmDropSiteUpdate(DropTarget.this.control.handle, args, args.length/2);	
+					if (DropTarget.this.control instanceof Label) {
+						int formHandle = OS.XtParent (DropTarget.this.control.handle);
+						OS.XmDropSiteUpdate(formHandle, args, args.length / 2);
+					}
+					break;
+				}
+			}
+		}
+	};
+	control.addListener (SWT.Dispose, controlListener);
+	Control c = control;
+	while (c != null) {
+		c.addListener (SWT.Show, controlListener);
+		c.addListener (SWT.Hide, controlListener);
+		c = c.getParent();
+	}
+
+	this.addListener(SWT.Dispose, new Listener () {
+		public void handleEvent (Event event) {
+			if (DropTarget.this.control == null || 
+				DropTarget.this.control.isDisposed()) return;
+			
+			unregisterDropTarget();
+			onDispose();
+		}
+	});
+
+	Object effect = control.getData(DEFAULT_DROP_TARGET_EFFECT);
+	if (effect instanceof DropTargetEffect) {
+		dropEffect = (DropTargetEffect) effect;
+	} else if (control instanceof Table) {
+		dropEffect = new TableDropTargetEffect();
+	} else if (control instanceof Tree) {
+		dropEffect = new TreeDropTargetEffect();
+	}
+
+	if (control.isVisible()) registerDropTarget();
+	
+	dragOverHeartbeat = new Runnable() {
+		public void run() {
+			Control control = DropTarget.this.control;
+			if (control == null || control.isDisposed() || dragOverStart == 0) return;
+			long time = System.currentTimeMillis();
+			int delay = DRAGOVER_HYSTERESIS;
+			if (time < dragOverStart) {
+				delay = (int)(dragOverStart - time);
+			} else {	
+				int allowedOperations = dragOverEvent.operations;
+				TransferData[] allowedTypes = dragOverEvent.dataTypes;
+			
+				TransferData[] dataTypes = new TransferData[allowedTypes.length];
+				System.arraycopy(allowedTypes, 0, dataTypes, 0, dataTypes.length);
+	
+				DNDEvent event = new DNDEvent();
+				event.widget = dragOverEvent.widget;
+				event.x = dragOverEvent.x;
+				event.y = dragOverEvent.y;
+				event.time = (int)time;
+				event.feedback = DND.FEEDBACK_SELECT;
+				event.dataTypes = dataTypes;
+				event.dataType = selectedDataType;
+				event.operations = dragOverEvent.operations;
+				event.detail  = selectedOperation;
+				event.item = getItem(getControl(), dragOverEvent.x, dragOverEvent.y);
+				notifyListeners(DND.DragOver, event);
+				
+				selectedDataType = null;
+				if (event.dataType != null) {
+					for (int i = 0; i < allowedTypes.length; i++) {
+						if (allowedTypes[i].type == event.dataType.type) {
+							selectedDataType = event.dataType;
+							break;
+						}
+					}
+				}
+
+				selectedOperation = DND.DROP_NONE;
+				if (selectedDataType != null && (event.detail & allowedOperations) != 0) {
+					selectedOperation = event.detail;
+				}
+			}
+			control = DropTarget.this.control;
+			if (control == null || control.isDisposed ()) return;
+			control.getDisplay().timerExec(delay, dragOverHeartbeat);
+		}
+	};
+}
+//end of method
+//gtk
+public DragSource(Control control, int style) {
+	super (control, checkStyle(style));
+	this.control = control;
+	if (DragGetData == null || DragEnd == null || DragDataDelete == null) {
+		DND.error(DND.ERROR_CANNOT_INIT_DRAG);
+	}
+	if (control.getData(DRAGSOURCEID) != null) {
+		DND.error(DND.ERROR_CANNOT_INIT_DRAG);
+	}
+	control.setData(DRAGSOURCEID, this);
+
+	OS.g_signal_connect(control.handle, OS.drag_data_get, DragGetData.getAddress(), 0);	
+	OS.g_signal_connect(control.handle, OS.drag_end, DragEnd.getAddress(), 0);
+	OS.g_signal_connect(control.handle, OS.drag_data_delete, DragDataDelete.getAddress(), 0);
+	
+	controlListener = new Listener () {
+		public void handleEvent (Event event) {
+			if (event.type == SWT.Dispose) {
+				if (!DragSource.this.isDisposed()) {
+					DragSource.this.dispose();
+				}
+			}
+			if (event.type == SWT.DragDetect) {
+				if (!DragSource.this.isDisposed()) {
+					DragSource.this.drag(event);
+				}
+			}
+		}
+	};
+	control.addListener (SWT.Dispose, controlListener);
+	control.addListener (SWT.DragDetect, controlListener);
+
+	Object effect = control.getData(DEFAULT_DRAG_SOURCE_EFFECT);
+	if (effect instanceof DragSourceEffect) {
+		dragEffect = (DragSourceEffect) effect;
+	} else if (control instanceof Tree) {
+		dragEffect = new TreeDragSourceEffect();
+	} else if (control instanceof Table) {
+		dragEffect = new TableDragSourceEffect();
+	}
+	
+	this.addListener(SWT.Dispose, new Listener() {
+		public void handleEvent(Event e) {
+			onDispose();
+		}
+	});
+}
+//end of method
+//win32
+public DragSource(Control control, int style) {
+	super(control, checkStyle(style));
+	this.control = control;
+	if (control.getData(DRAGSOURCEID) != null) {
+		DND.error(DND.ERROR_CANNOT_INIT_DRAG);
+	}
+	control.setData(DRAGSOURCEID, this);
+	createCOMInterfaces();
+	this.AddRef();
+
+	controlListener = new Listener() {
+		public void handleEvent(Event event) {
+			if (event.type == SWT.Dispose) {
+				if (!DragSource.this.isDisposed()) {
+					DragSource.this.dispose();
+				}
+			}
+			if (event.type == SWT.DragDetect) {
+				if (!DragSource.this.isDisposed()) {
+					DragSource.this.drag(event);
+				}
+			}
+		}
+	};
+	control.addListener(SWT.Dispose, controlListener);
+	control.addListener(SWT.DragDetect, controlListener);
+	
+	this.addListener(SWT.Dispose, new Listener() {
+		public void handleEvent(Event e) {
+			DragSource.this.onDispose();
+		}
+	});
+
+	Object effect = control.getData(DEFAULT_DRAG_SOURCE_EFFECT);
+	if (effect instanceof DragSourceEffect) {
+		dragEffect = (DragSourceEffect) effect;
+	} else if (control instanceof Tree) {
+		dragEffect = new TreeDragSourceEffect();
+	} else if (control instanceof Table) {
+		dragEffect = new TableDragSourceEffect();
+	}
+}
+//end of method
+//win32
+public DropTarget(Control control, int style) {
+	super (control, checkStyle(style));
+	this.control = control;
+	if (control.getData(DROPTARGETID) != null) {
+		DND.error(DND.ERROR_CANNOT_INIT_DROP);
+	}
+	control.setData(DROPTARGETID, this);
+	createCOMInterfaces();
+	this.AddRef();
+	
+	if (COM.CoLockObjectExternal(iDropTarget.getAddress(), true, true) != COM.S_OK)
+		DND.error(DND.ERROR_CANNOT_INIT_DROP);
+	if (COM.RegisterDragDrop( control.handle, iDropTarget.getAddress()) != COM.S_OK)
+		DND.error(DND.ERROR_CANNOT_INIT_DROP);
+
+	controlListener = new Listener () {
+		public void handleEvent (Event event) {
+			if (!DropTarget.this.isDisposed()){
+				DropTarget.this.dispose();
+			}
+		}
+	};
+	control.addListener (SWT.Dispose, controlListener);
+	
+	this.addListener(SWT.Dispose, new Listener () {
+		public void handleEvent (Event event) {
+			onDispose();
+		}
+	});
+	
+	Object effect = control.getData(DEFAULT_DROP_TARGET_EFFECT);
+	if (effect instanceof DropTargetEffect) {
+		dropEffect = (DropTargetEffect) effect;
+	} else if (control instanceof Table) {
+		dropEffect = new TableDropTargetEffect();
+	} else if (control instanceof Tree) {
+		dropEffect = new TreeDropTargetEffect();
+	}
+}
+//end of method
+//carbon
+public DragSource(Control control, int style) {
+	super (control, checkStyle(style));
+	this.control = control;
+	if (control.getData(DRAGSOURCEID) != null) {
+		DND.error(DND.ERROR_CANNOT_INIT_DRAG);
+	}
+	control.setData(DRAGSOURCEID, this);
+	
+	controlListener = new Listener () {
+		public void handleEvent (Event event) {
+			if (event.type == SWT.Dispose) {
+				if (!DragSource.this.isDisposed()) {
+					DragSource.this.dispose();
+				}
+			}
+			if (event.type == SWT.DragDetect) {
+				if (!DragSource.this.isDisposed()) {
+					DragSource.this.drag(event);
+				}
+			}
+		}
+	};
+	control.addListener (SWT.Dispose, controlListener);
+	control.addListener (SWT.DragDetect, controlListener);
+	
+	this.addListener(SWT.Dispose, new Listener() {
+		public void handleEvent(Event e) {
+			onDispose();
+		}
+	});
+	
+	Object effect = control.getData(DEFAULT_DRAG_SOURCE_EFFECT);
+	if (effect instanceof DragSourceEffect) {
+		dragEffect = (DragSourceEffect) effect;
+	}
+}
+//end of method
+//photon
+public DropTarget(Control control, int style) {
+	super (control, checkStyle(style));
+	this.control = control;
+	if (control.getData(DROPTARGETID) != null)
+		DND.error(DND.ERROR_CANNOT_INIT_DROP);
+	control.setData(DROPTARGETID, this);
+
+	controlListener = new Listener () {
+		public void handleEvent (Event event) {
+			if (!DropTarget.this.isDisposed()){
+				DropTarget.this.dispose();
+			}
+		}
+	};
+	control.addListener (SWT.Dispose, controlListener);
+	
+	this.addListener(SWT.Dispose, new Listener() {
+		public void handleEvent (Event event) {
+			onDispose();
+		}
+	});
+
+	Object effect = control.getData(DEFAULT_DROP_TARGET_EFFECT);
+	if (effect instanceof DropTargetEffect) {
+		dropEffect = (DropTargetEffect) effect;
+	}
+}
+//end of method
+//emulated
+public DropTarget(Control control, int style) {
+	super (control, checkStyle(style));
+	this.control = control;
+	if (control.getData(DROPTARGETID) != null)
+		DND.error(DND.ERROR_CANNOT_INIT_DROP);
+	control.setData(DROPTARGETID, this);
+
+	controlListener = new Listener () {
+		public void handleEvent (Event event) {
+			if (!DropTarget.this.isDisposed()){
+				DropTarget.this.dispose();
+			}
+		}
+	};
+	control.addListener (SWT.Dispose, controlListener);
+	
+	this.addListener(SWT.Dispose, new Listener() {
+		public void handleEvent (Event event) {
+			onDispose();
+		}
+	});
+
+	Object effect = control.getData(DEFAULT_DROP_TARGET_EFFECT);
+	if (effect instanceof DropTargetEffect) {
+		dropEffect = (DropTargetEffect) effect;
+	}
+}
+//end of method

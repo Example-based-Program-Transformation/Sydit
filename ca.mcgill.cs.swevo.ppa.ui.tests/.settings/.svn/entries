@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="283"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.ui.tests/.settings"
+   committed-rev="283"
+   kind="dir"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="org.eclipse.jdt.core.prefs"
+   checksum="f8063e14e24ec222587f21ec7c26219d"
+   last-author="mengna"
+   committed-rev="283"
+   text-time="2010-06-29T23:25:14.000000Z"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"
+   prop-time="2010-06-29T23:25:14.000000Z"/>
+</wc-entries>

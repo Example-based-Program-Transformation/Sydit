@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   revision="277"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa/src/ca/mcgill/cs/swevo/ppa"
+   committed-rev="277"
+   kind="dir"
+   committed-date="2012-04-27T14:36:15.016000Z"/>
+<entry
+   name="PPAASTUtil.java"
+   checksum="67f77f37f5c1c86d199beebc89f31454"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:14.000000Z"/>
+<entry
+   name="PPAIndex.java"
+   checksum="a70bba3bb8a313174617c8542c676ef4"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:18.000000Z"/>
+<entry
+   name="PPAIndexer.java"
+   checksum="cac658d040d0127da02feeae0c09854d"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:13.000000Z"/>
+<entry
+   name="PPALoggerUtil.java"
+   checksum="a93bc1afb97e231909a80baea04dc0a3"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:18.000000Z"/>
+<entry
+   name="PPANameVisitor.java"
+   checksum="f211e6daa4ceaf2c314cecf5d5d1bb68"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:14.000000Z"/>
+<entry
+   name="PPAOptions.java"
+   checksum="be2ae2d98b5b30b2a30253a9c2c44741"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:15.000000Z"/>
+<entry
+   name="SnippetUtil.java"
+   checksum="8cb4b7274163c20b684a5573a3aa1366"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:16.000000Z"/>
+<entry
+   name="TypeFact.java"
+   checksum="323c997a6aca66dd80b0989015be911e"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:13.000000Z"/>
+<entry
+   name="TypeFactMerger.java"
+   checksum="4676bf6462302ad833978c77baf002e0"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:16.000000Z"/>
+<entry
+   name="ValidatorUtil.java"
+   checksum="c71084e014c78f2b9a7aac5cf42efcab"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:21.000000Z"/>
+<entry
+   name="inference"
+   kind="dir"/>
+</wc-entries>

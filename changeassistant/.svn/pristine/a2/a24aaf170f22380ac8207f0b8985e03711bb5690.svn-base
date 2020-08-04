@@ -1,0 +1,51 @@
+package changeassistant.crystal.analysis.postdominate;
+
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import changeassistant.crystal.analysis.DominateLE;
+import changeassistant.crystal.analysis.SetLatticeElement;
+import changeassistant.internal.WorkspaceUtilities;
+
+import edu.cmu.cs.crystal.AbstractCrystalMethodAnalysis;
+import edu.cmu.cs.crystal.tac.TACFlowAnalysis;
+import edu.cmu.cs.crystal.tac.eclipse.CompilationUnitTACs;
+
+public class PostDominateAnalysis extends AbstractCrystalMethodAnalysis{
+
+	private TACFlowAnalysis<SetLatticeElement<DominateLE>> fa;
+	
+	private String methodSignature;
+	
+	private int startPosition, length;
+	
+	PostDominateElementResult result;
+	
+	public PostDominateAnalysis(){
+		super();
+	}
+	
+	public PostDominateAnalysis(String methodSignature, int startPosition, int length){
+		super();
+		this.methodSignature = methodSignature;
+		this.startPosition = startPosition;
+		this.length = length;
+	}
+	
+	@Override
+	public void analyzeMethod(MethodDeclaration d) {
+		if(WorkspaceUtilities.getMethodSignatureFromASTNode(d).equals(methodSignature) &&
+				d.getStartPosition() == this.startPosition && d.getLength() == this.length){
+			CompilationUnitTACs tac = this.analysisInput.getComUnitTACs().unwrap();
+			PostDominateTransferFunction tf = new PostDominateTransferFunction(tac, d);
+			fa = new TACFlowAnalysis<SetLatticeElement<DominateLE>>(tf, 
+					this.analysisInput.getComUnitTACs().unwrap());
+			result = new PostDominateElementResult(d, fa, tac);
+		}
+		
+	}
+
+	public PostDominateElementResult getResult(){
+		return this.result;
+	}
+	
+}

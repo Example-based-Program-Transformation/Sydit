@@ -1,0 +1,24 @@
+public void setStatusMessage(String message){
+  if (slm != null) {
+    slm.setMessage(message);
+  }
+  if (fActionBars != null) {
+    IStatusLineManager slm=fActionBars.getStatusLineManager();
+    if (slm != null) {
+    }
+  }
+}
+//end of method
+public void setStatusMessage(String message) {
+		if (!fContainerProvided) {
+			IActionBars actionBars= getActionBars();
+			if (actionBars != null) {
+				IStatusLineManager slm= actionBars.getStatusLineManager();
+				if (slm != null) {
+					slm.setMessage(message);
+				}
+			}
+		} else if (fContainer != null) {
+			fContainer.setStatusMessage(message);
+		}
+	}

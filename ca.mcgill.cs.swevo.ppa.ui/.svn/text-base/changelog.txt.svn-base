@@ -1,0 +1,22 @@
+1.1.1
+- fixed a bug when comparing two types and one of their declaring class is null.
+- Array Type Inference : TODO!
+
+1.1.0
+- now requires Eclipse 3.5
+
+1.0.9
+Fixed a bug with compatible types and null.
+Fixed a bug where the container's type of a field was not properly inferred.
+Made wrong field case consistent: when PPA encounters an impossible field (e.g., String.foo), the field is still created as being contained by String, but String does not contain foo. This is a rare case (uncompilable code or jdk class shadowing), but in the future, I plan to let the user decides the behaviour for such a case through an option in PPAEngine.
+
+1.0.8
+Added inference support for super method invocation.
+Fixed another bug related to fully qualified name.
+
+1.0.7
+Fixed a bug regarding fully qualified name.
+
+1.0.6
+added constructor inference strategy
+added array access inference strategy

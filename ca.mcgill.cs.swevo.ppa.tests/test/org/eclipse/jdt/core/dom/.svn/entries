@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="279"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.tests/test/org/eclipse/jdt/core/dom"
+   committed-rev="279"
+   kind="dir"
+   committed-date="2012-04-27T14:37:19.153000Z"/>
+<entry
+   name="AnonTest.java"
+   checksum="2774b211637a43d72fc0a50074752051"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"/>
+<entry
+   name="ArrayAccessInferenceStrategyTest.java"
+   checksum="60a1394a04c4dceedeee16d4bed05c5f"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:22.000000Z"/>
+<entry
+   name="ArrayIndexInferenceStrategyTest.java"
+   checksum="0e50ac6bfa82b1e4ccf4a0f2555e9cb7"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:26.000000Z"/>
+<entry
+   name="AssignInferenceStrategyTest.java"
+   checksum="590000dc08521b6b3d6b1e2399edd9f3"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:27.000000Z"/>
+<entry
+   name="BinaryInferenceStrategyTest.java"
+   checksum="0dfb9cf8368d2bf678f8656b581ed625"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:29.000000Z"/>
+<entry
+   name="ConditionInferenceStrategyTest.java"
+   checksum="e95e73d876e957bf13bb9e79f08b64a3"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:21.000000Z"/>
+<entry
+   name="ConstructorTest.java"
+   checksum="eff0d0882677dd34e94d0fc8f88ef249"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:29.000000Z"/>
+<entry
+   name="EnumTest.java"
+   checksum="28dc2b2cd2f254d7bfc071b214327489"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:22.000000Z"/>
+<entry
+   name="FQNMissingTypeTest.java"
+   checksum="af84d60a42723a3c21616849fd51c134"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:31.000000Z"/>
+<entry
+   name="FieldInferenceStrategyTest.java"
+   checksum="8a9ee204ef21035e57cb621c0666dbae"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:27.000000Z"/>
+<entry
+   name="GenericsTest.java"
+   checksum="dc5452480658567012e7da0944a8e7f2"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"/>
+<entry
+   name="MemberInferencerTest.java"
+   checksum="638098b96360031413ed747946176d60"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:29.000000Z"/>
+<entry
+   name="MethodBindingTest.java"
+   checksum="9ff29d5a53a4edd13def7f113a596de0"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:28.000000Z"/>
+<entry
+   name="MethodInferenceStrategyTest.java"
+   checksum="7a2f52f0c2493db486d34b4d5325785c"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:26.000000Z"/>
+<entry
+   name="PPAASTParserUtilTest.java"
+   checksum="a8b5d488268be67bdf95593bb388a1bd"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"/>
+<entry
+   name="PPAASTUtilTest.java"
+   checksum="f99d69c0975a15e162410e9f59329411"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:25.000000Z"/>
+<entry
+   name="PPABindingsUtilTest.java"
+   checksum="2c981a0aedcd3b02448b7e244bd67a59"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:30.000000Z"/>
+<entry
+   name="PPATypeRegistry_FQNTest.java"
+   checksum="5451108f4e79e286d170eb4e63bd9665"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:27.000000Z"/>
+<entry
+   name="PPATypeRegistry_FieldTest.java"
+   checksum="de97cce321653528fd27330decfa7ef5"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:26.000000Z"/>
+<entry
+   name="PPATypeRegistry_MethodTest.java"
+   checksum="586052c336bac7e5072106c4a5af1380"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:28.000000Z"/>
+<entry
+   name="PPATypeRegistry_TypeTest.java"
+   checksum="86d9b0adad391c4f6642660a19be6afe"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:28.000000Z"/>
+<entry
+   name="ReturnInferenceStrategyTest.java"
+   checksum="80d9d33e8f265b05d1cbfcb2c22dec62"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:29.000000Z"/>
+<entry
+   name="SyntaxDisambiguationTest.java"
+   checksum="e0ed11db770da1c1f77ec2018c6c8e6c"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:30.000000Z"/>
+<entry
+   name="UnaryInferenceStrategyTest.java"
+   checksum="bb8bcc6ce876914375a4ed307750a394"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:26.000000Z"/>
+</wc-entries>

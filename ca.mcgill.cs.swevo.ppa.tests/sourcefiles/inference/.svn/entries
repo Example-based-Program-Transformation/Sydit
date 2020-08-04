@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="279"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.tests/sourcefiles/inference"
+   committed-rev="279"
+   kind="dir"
+   committed-date="2012-04-27T14:37:19.153000Z"/>
+<entry
+   name="ArrayAccess1.java"
+   checksum="da1a3873a2e92689e210deb9ed8dcc80"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:28.000000Z"/>
+<entry
+   name="ArrayIndex1.java"
+   checksum="3d3dbabe3b27279a64c969e5398e25ab"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:22.000000Z"/>
+<entry
+   name="Assign1.java"
+   checksum="a7f9496ee607807a2f1cfa927744fa0f"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:24.000000Z"/>
+<entry
+   name="Binary1.java"
+   checksum="6dcefb57cf7e7afdabfcd6c922a26420"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:22.000000Z"/>
+<entry
+   name="Binary2.java"
+   checksum="7147bfe264626a336b613e054838c19d"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:21.000000Z"/>
+<entry
+   name="Condition1.java"
+   checksum="5b47970c1db2a07147f79f13f3ef4952"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:25.000000Z"/>
+<entry
+   name="Field1.java"
+   checksum="fb9fc4a10b365f449fc4ba07be29918d"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:26.000000Z"/>
+<entry
+   name="Method1.java"
+   checksum="313db224ed6463583f6609409564afc2"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:30.000000Z"/>
+<entry
+   name="Return1.java"
+   checksum="e7d351ca393258bf387ffb1390a177af"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:26.000000Z"/>
+<entry
+   name="Unary1.java"
+   checksum="07899afd4e71f6a8cd98849112e67876"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:28.000000Z"/>
+</wc-entries>

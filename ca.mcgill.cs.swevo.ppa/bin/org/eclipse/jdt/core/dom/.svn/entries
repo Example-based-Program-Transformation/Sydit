@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   revision="277"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa/src/org/eclipse/jdt/core/dom"
+   committed-rev="277"
+   kind="dir"
+   committed-date="2012-04-27T14:36:15.016000Z"/>
+<entry
+   name="AbstractInferenceStrategy.java"
+   checksum="7ceb95715dd1173e2a7b9eb3ad000bf8"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:22.000000Z"/>
+<entry
+   name="MemberInferencer.java"
+   checksum="6d6222aa659885f9329c4fd309501b87"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:16.000000Z"/>
+<entry
+   name="MethodInvocationUtil.java"
+   checksum="1d17438050160bb738a7b7a2a968d9eb"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:14.000000Z"/>
+<entry
+   name="PPAASTParser.java"
+   checksum="18525db114b6c0ef6a6240704db365b3"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"/>
+<entry
+   name="PPABindingsUtil.java"
+   checksum="28bf35dc75656793cfdb75bf61fbbc92"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:22.000000Z"/>
+<entry
+   name="PPACompilationUnitResolver.java"
+   checksum="0d331d69e4c444960ba956aecba9eb44"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"/>
+<entry
+   name="PPADefaultBindingResolver.java"
+   checksum="b73204a1f2b81741850f40ccdacf7895"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:22.000000Z"/>
+<entry
+   name="PPAEngine.java"
+   checksum="5faa21418a4b7758d1ddd83e9a5da075"
+   last-author="mengna"
+   text-time="2010-08-13T07:26:37.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:20.000000Z"/>
+<entry
+   name="PPATypeRegistry.java"
+   checksum="7955bbd538e1643dc274cd154410d734"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:14.000000Z"/>
+<entry
+   name="SeedVisitor.java"
+   checksum="cc42f1fc6be4c41fd737b93061159a44"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:13.000000Z"/>
+<entry
+   name="SyntaxDisambiguation.java"
+   checksum="6fa572e84830916ba979e6ce794cc9a8"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:18.000000Z"/>
+</wc-entries>

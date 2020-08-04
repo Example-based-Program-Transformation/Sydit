@@ -1,0 +1,177 @@
+//win32
+String verifyText(String string, int start, int end, Event keyEvent){
+	Event event = new Event ();
+	event.text = string;
+	event.start = start;
+	event.end = end;
+	if (keyEvent != null) {
+		event.character = keyEvent.character;
+		event.keyCode = keyEvent.keyCode;
+		event.stateMask = keyEvent.stateMask;
+	}
+	int index = 0;
+	if (digits > 0) {
+		String decimalSeparator = getDecimalSeparator ();
+		index = string.indexOf (decimalSeparator);
+		if (index != -1) {
+			string = string.substring (0, index) + string.substring (index + 1);
+		}
+		index = 0;
+	}
+	while (index < string.length ()) {
+		if (!Character.isDigit (string.charAt (index))) break;
+		index++;
+	}
+	event.doit = index == string.length ();
+	if (OS.IsDBLocale) {
+		event.start = mbcsToWcsPos (start);
+		event.end = mbcsToWcsPos (end);
+	}
+	sendEvent (SWT.Verify, event);
+	if (!event.doit || isDisposed ()) return null;
+	return event.text;
+}
+//end of method
+//carbon
+String verifyText (String string, int start, int end, Event keyEvent) {
+	Event event = new Event ();
+	event.text = string;
+	event.start = start;
+	event.end = end;
+	if (keyEvent != null) {
+		event.character = keyEvent.character;
+		event.keyCode = keyEvent.keyCode;
+		event.stateMask = keyEvent.stateMask;
+	}
+	int index = 0;
+	if (digits > 0) {
+		String decimalSeparator = getDecimalSeparator ();
+		index = string.indexOf (decimalSeparator);
+		if (index != -1) {
+			string = string.substring (0, index) + string.substring (index + 1);
+		}
+		index = 0;
+	}
+	while (index < string.length ()) {
+		if (!Character.isDigit (string.charAt (index))) break;
+		index++;
+	}
+	event.doit = index == string.length ();	
+	sendEvent (SWT.Verify, event);
+	if (!event.doit || isDisposed ()) return null;
+	return event.text;
+}
+//end of method
+//gtk
+String verifyText(String string, int start, int end){
+	if (string.length () == 0 && start == end) return null;
+	Event event = new Event ();
+	event.text = string;
+	event.start = start;
+	event.end = end;
+	int eventPtr = OS.gtk_get_current_event ();
+	if (eventPtr != 0) {
+		GdkEventKey gdkEvent = new GdkEventKey ();
+		OS.memmove (gdkEvent, eventPtr, GdkEventKey.sizeof);
+		switch (gdkEvent.type) {
+			case OS.GDK_KEY_PRESS:
+				setKeyState (event, gdkEvent);
+				break;
+		}
+		OS.gdk_event_free (eventPtr);
+	}
+	int index = 0;
+	if (OS.gtk_spin_button_get_digits (handle) > 0) {
+		String decimalSeparator = getDecimalSeparator ();
+		index = string.indexOf (decimalSeparator);
+		if (index != -1) {
+			string = string.substring (0, index) + string.substring (index + 1);
+		}
+		index = 0;
+	}
+	while (index < string.length ()) {
+		if (!Character.isDigit (string.charAt (index))) break;
+		index++;
+	}
+	event.doit = index == string.length ();
+	/*
+	 * It is possible (but unlikely), that application
+	 * code could have disposed the widget in the verify
+	 * event.  If this happens, answer null to cancel
+	 * the operation.
+	 */
+	sendEvent (SWT.Verify, event);
+	if (!event.doit || isDisposed ()) return null;
+	return event.text;
+}
+//end of method
+//motif
+int XmNmodifyVerifyCallback(int w, int client_data, int call_data){
+	if (w == handle) {
+		if ((style & SWT.WRAP) == 0) {
+			XmSpinBoxCallbackStruct struct = new XmSpinBoxCallbackStruct ();
+			OS.memmove (struct, call_data, XmSpinBoxCallbackStruct.sizeof);
+			if (struct.crossed_boundary != 0) {
+				struct.doit = (byte) 0;
+				OS.memmove (call_data, struct, XmSpinBoxCallbackStruct.sizeof);
+			}
+		}
+		return 0;
+	}
+	int result = super.XmNmodifyVerifyCallback (w, client_data, call_data);
+	if (result != 0) return result;
+	
+	if (font == null) return result;
+	
+	XmTextVerifyCallbackStruct textVerify = new XmTextVerifyCallbackStruct ();
+	OS.memmove (textVerify, call_data, XmTextVerifyCallbackStruct.sizeof);
+	XmTextBlockRec textBlock = new XmTextBlockRec ();
+	OS.memmove (textBlock, textVerify.text, XmTextBlockRec.sizeof);
+	byte [] buffer = new byte [textBlock.length];
+	OS.memmove (buffer, textBlock.ptr, textBlock.length);
+	String codePage = getCodePage ();
+	String text = new String (Converter.mbcsToWcs (codePage, buffer));
+	Event event = new Event ();
+	if (textVerify.event != 0) {
+		XKeyEvent xEvent = new XKeyEvent ();
+		OS.memmove (xEvent, textVerify.event, XKeyEvent.sizeof);
+		event.time = xEvent.time;
+		setKeyState (event, xEvent);
+	}
+	event.start = textVerify.startPos;
+	event.end = textVerify.endPos;
+	event.text = text;
+	String string = text;
+	int index = 0;
+	int [] argList = {OS.XmNdecimalPoints, 0};
+	OS.XtGetValues (handle, argList, argList.length / 2);
+	if (argList [1] > 0) {
+		String decimalSeparator = getDecimalSeparator ();
+		index = string.indexOf (decimalSeparator);
+		if (index != -1) {
+			string = string.substring (0, index) + string.substring (index + 1);
+		}
+		index = 0;
+	}
+	while (index < string.length ()) {
+		if (!Character.isDigit (string.charAt (index))) break;
+		index++;
+	}
+	event.doit = index == string.length ();
+	sendEvent (SWT.Verify, event);
+	String newText = event.text;
+	textVerify.doit = (byte) ((event.doit && newText != null) ? 1 : 0);
+	if (newText != null && newText != text) {
+		OS.XtFree(textBlock.ptr);
+		byte [] buffer2 = Converter.wcsToMbcs (codePage, newText, true);
+		int length = buffer2.length;
+		int ptr = OS.XtMalloc (length);
+		OS.memmove (ptr, buffer2, length);
+		textBlock.ptr = ptr;
+		textBlock.length = buffer2.length - 1;
+		OS.memmove (textVerify.text, textBlock, XmTextBlockRec.sizeof);
+	}
+	OS.memmove (call_data, textVerify, XmTextVerifyCallbackStruct.sizeof);
+	return result;
+}
+//end of method

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="277"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa/src"
+   committed-rev="277"
+   kind="dir"
+   committed-date="2012-04-27T14:36:15.016000Z"/>
+<entry
+   name="ca"
+   kind="dir"/>
+<entry
+   name="org"
+   kind="dir"/>
+</wc-entries>

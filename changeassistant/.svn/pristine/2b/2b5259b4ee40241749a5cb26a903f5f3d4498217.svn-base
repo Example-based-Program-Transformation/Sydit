@@ -1,0 +1,68 @@
+package changeassistant.crystal.analysis.def;
+
+
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.jdt.core.dom.ASTNode;
+
+import changeassistant.peers.SourceCodeRange;
+
+import edu.cmu.cs.crystal.tac.model.Variable;
+
+public class DefUseLE {
+	public Set<SourceCodeRange> defs;
+	public Set<SourceCodeRange> uses;
+	
+	protected DefUseLE(){
+		defs = new HashSet<SourceCodeRange>();
+		uses = new HashSet<SourceCodeRange>();
+	}
+	
+	public DefUseLE(DefUseLE le){		
+		this.defs = new HashSet<SourceCodeRange>(le.defs);
+//		this.uses = new HashSet<SourceCodeRange>();
+		this.uses = new HashSet<SourceCodeRange>(le.uses);
+	}
+	
+	public static DefUseLE bottom(){
+		return new DefUseLE();
+	}
+	
+	public boolean containDef(SourceCodeRange range){
+		return this.defs.contains(range);
+	}
+	
+	public boolean containUsage(SourceCodeRange range){
+		return this.uses.contains(range);
+	}
+	
+	//TODO can be deleted
+//	public static DefUseLE createDef(ASTNode astNode){
+//		DefUseLE defUseLE = new DefUseLE();
+//		defUseLE.defs.add(new SourceCodeRange(astNode.getStartPosition(), astNode.getLength()));
+//		return defUseLE;
+//	}
+	
+	public boolean isEmpty(){
+		return this.defs.isEmpty() && this.uses.isEmpty();
+	}
+	
+	public String toString(){
+		StringBuffer result = new StringBuffer("DEF: ");
+		for(SourceCodeRange def : defs){
+			result.append(def + " ");
+		}
+		
+		result.append("\n" + "USE: ");
+		for(SourceCodeRange use : uses){
+			result.append(use + " ");
+		}
+		
+		return result.toString();
+	}
+}

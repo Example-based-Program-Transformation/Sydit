@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   revision="283"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.ui.tests/sourcefiles/complete"
+   committed-rev="283"
+   kind="dir"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser0.java"
+   checksum="1b5025f785456c0223265b811ab91566"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser1.java"
+   checksum="dfd9730fe1c92b702611214608ca548a"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser2.java"
+   checksum="364f1e40d7ffbd40e64fd6f35e5e4b63"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser3.java"
+   checksum="6c70cfc09083a83e4a72d58fa0989e02"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser4.java"
+   checksum="2da2881641a682a2f400f9324828e845"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser5.java"
+   checksum="82bb9c7fd3f72902133ea706b39e5f54"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser6.java"
+   checksum="bf51099ce197a86697ae232b8e12af1e"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser7.java"
+   checksum="ebb1ea5799682b1a1bbb16612cfe1d98"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="PPAASTParser8.java"
+   checksum="ac5d5663ce7d936e254dbab14b87ce1f"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+</wc-entries>

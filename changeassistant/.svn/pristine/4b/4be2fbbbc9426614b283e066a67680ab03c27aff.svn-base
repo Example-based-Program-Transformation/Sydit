@@ -1,0 +1,62 @@
+package changeassistant.crystal.analysis.postdominate;
+
+import java.util.List;
+
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.Statement;
+
+import changeassistant.crystal.analysis.DominateLE;
+import changeassistant.crystal.analysis.SetLatticeElement;
+import changeassistant.crystal.analysis.SetLatticeOperations;
+import changeassistant.peers.SourceCodeRange;
+
+import edu.cmu.cs.crystal.flow.AnalysisDirection;
+import edu.cmu.cs.crystal.flow.ILatticeOperations;
+import edu.cmu.cs.crystal.simple.AbstractingTransferFunction;
+import edu.cmu.cs.crystal.tac.eclipse.CompilationUnitTACs;
+import edu.cmu.cs.crystal.tac.eclipse.EclipseTAC;
+import edu.cmu.cs.crystal.tac.model.TACInstruction;
+
+public class PostDominateTransferFunction 
+extends AbstractingTransferFunction<SetLatticeElement<DominateLE>>{
+	
+	private MethodDeclaration d;
+	
+	private CompilationUnitTACs cTac;
+	
+	private EclipseTAC tac;
+	
+	public PostDominateTransferFunction(CompilationUnitTACs tac, MethodDeclaration d){
+		this.d = d;
+		this.cTac = tac;
+		this.tac = tac.getMethodTAC(d);
+	}
+	
+	private final SetLatticeOperations<DominateLE> ops = 
+		new SetLatticeOperations<DominateLE>(new PostDominateLatticeOps(), DominateLE.bottom());
+
+	@Override
+	public ILatticeOperations<SetLatticeElement<DominateLE>> getLatticeOperations() {
+		return ops;
+	}
+
+	@Override
+	public SetLatticeElement<DominateLE> createEntryValue(
+			MethodDeclaration method) {
+		return ops.getDefault();
+	}
+	
+	@Override
+	public AnalysisDirection getAnalysisDirection(){
+		return AnalysisDirection.BACKWARD_ANALYSIS;
+	}
+
+	@Override
+	public SetLatticeElement<DominateLE> transfer(TACInstruction instr,  
+			SetLatticeElement<DominateLE> value) {
+		SourceCodeRange range = new SourceCodeRange(instr.getNode().getStartPosition(), 
+				instr.getNode().getLength());
+		value.add(new DominateLE(range));
+		return value;
+	}
+}

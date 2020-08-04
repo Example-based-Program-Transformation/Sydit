@@ -1,0 +1,94 @@
+//win32
+Shell(Display display, Shell parent, int style, int handle){
+	super ();
+	checkSubclass ();
+	if (display == null) display = Display.getCurrent ();
+	if (display == null) display = Display.getDefault ();
+	if (!display.isValidThread ()) {
+		error (SWT.ERROR_THREAD_INVALID_ACCESS);
+	}
+	if (parent != null && parent.isDisposed ()) {
+		error (SWT.ERROR_INVALID_ARGUMENT);	
+	}
+	this.style = checkStyle (style);
+	this.parent = parent;
+	this.display = display;
+	this.handle = handle;
+	createWidget ();
+}
+//end of method
+//gtk
+Shell (Display display, Shell parent, int style, int handle) {
+	super ();
+	checkSubclass ();
+	if (display == null) display = Display.getCurrent ();
+	if (display == null) display = Display.getDefault ();
+	if (!display.isValidThread ()) {
+		error (SWT.ERROR_THREAD_INVALID_ACCESS);
+	}
+	if (parent != null && parent.isDisposed ()) {
+		error (SWT.ERROR_INVALID_ARGUMENT);	
+	}
+	this.style = checkStyle (style);
+	this.parent = parent;
+	this.display = display;
+	this.handle = handle;
+	createWidget (0);
+}
+//end of method
+//motif
+Shell (Display display, Shell parent, int style, int handle) {
+	super ();
+	checkSubclass ();
+	if (display == null) display = Display.getCurrent ();
+	if (display == null) display = Display.getDefault ();
+	if (!display.isValidThread ()) {
+		error (SWT.ERROR_THREAD_INVALID_ACCESS);
+	}
+	if (parent != null && parent.isDisposed ()) {
+		error (SWT.ERROR_INVALID_ARGUMENT);	
+	}
+	this.style = checkStyle (style);
+	this.parent = parent;
+	this.display = display;
+	this.handle = handle;
+	createWidget (0);
+}
+//end of method
+//photon
+Shell (Display display, Shell parent, int style, int handle) {
+	super ();
+	if (display == null) display = Display.getCurrent ();
+	if (display == null) display = Display.getDefault ();
+	if (!display.isValidThread ()) {
+		error (SWT.ERROR_THREAD_INVALID_ACCESS);
+	}
+	if (parent != null && parent.isDisposed ()) {
+		error (SWT.ERROR_INVALID_ARGUMENT);	
+	}
+	this.style = checkStyle (style);
+	this.parent = parent;
+	this.display = display;
+	this.handle = handle;
+	createWidget (0);
+}
+//end of method
+//carbon
+Shell (Display display, Shell parent, int style, int handle) {
+	super ();
+	checkSubclass ();
+	if (display == null) display = Display.getCurrent ();
+	if (display == null) display = Display.getDefault ();
+	if (!display.isValidThread ()) {
+		error (SWT.ERROR_THREAD_INVALID_ACCESS);
+	}
+	if (parent != null && parent.isDisposed ()) {
+		error (SWT.ERROR_INVALID_ARGUMENT);	
+	}
+	this.style = checkStyle (style);
+	this.parent = parent;
+	this.display = display;
+	this.handle = handle;
+	createWidget ();
+}
+//end of method

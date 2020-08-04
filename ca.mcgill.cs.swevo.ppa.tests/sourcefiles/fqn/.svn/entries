@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="279"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.tests/sourcefiles/fqn"
+   committed-rev="279"
+   kind="dir"
+   committed-date="2012-04-27T14:37:19.153000Z"/>
+<entry
+   name="A1.java"
+   checksum="14751026a14c6dfc561c1cab35300e87"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:24.000000Z"/>
+<entry
+   name="A2.java"
+   checksum="adcd085240fd897485b47dab86067d33"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:22.000000Z"/>
+<entry
+   name="A3.java"
+   checksum="da6ed46721d7d3c928f4f55177394853"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:24.000000Z"/>
+<entry
+   name="A4.java"
+   checksum="b8a159b839efea2bca991b27117c88f0"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:23.000000Z"/>
+<entry
+   name="A5.java"
+   checksum="2381af26ca9fffe359d31937c9200101"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:28.000000Z"/>
+<entry
+   name="A6.java"
+   checksum="cdbf52116a7f6cbf16d0d440d179d4b7"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:25.000000Z"/>
+<entry
+   name="TextAreaPainter.java"
+   checksum="a3ed17df5bc077780041d79696f83458"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:27.000000Z"/>
+<entry
+   name="TypeBinding.java"
+   checksum="f52c6f9887a86f76275b158587339ecb"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:27.000000Z"/>
+</wc-entries>

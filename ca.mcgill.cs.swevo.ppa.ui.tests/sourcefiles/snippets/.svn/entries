@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="283"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.ui.tests/sourcefiles/snippets"
+   committed-rev="283"
+   kind="dir"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="java1.java"
+   checksum="67bf4ea470504fe1553ec476452f3ff2"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"
+   prop-time="2012-04-27T15:08:42.000000Z"/>
+<entry
+   name="java2.java"
+   checksum="fd1891f49babd1b28bf2792220f1c148"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"
+   prop-time="2012-04-27T15:08:44.000000Z"/>
+<entry
+   name="java3.java"
+   checksum="1546df3364dc93e09e323f47ff05df42"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"
+   prop-time="2012-04-27T15:08:43.000000Z"/>
+<entry
+   name="java4.java"
+   checksum="91e12d4e64a42a7a42d45521fef403e4"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="snippet0.java"
+   checksum="d0421c36570e31095896f744491f4e92"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="snippet1.java"
+   checksum="9a2e61e971aa260c57099b6d16fe8e9b"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="snippet2.java"
+   checksum="ae3058a2b560d96d728ea6d970748e6b"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="snippet3.java"
+   checksum="75db855851cffa37e9297f98922b38fd"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="snippet4.java"
+   checksum="d4d03b3e894e21e34a941ee742d78479"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="snippet5.java"
+   checksum="4f07c8666aff8889e8d4796d89b1b96c"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="snippet6.java"
+   checksum="5a91d259acee72e8b0a425d0f50a65f3"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="snippet7.java"
+   checksum="c73cf0292678c305f0bcc367d932bb41"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="283"
+   kind="file"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+</wc-entries>

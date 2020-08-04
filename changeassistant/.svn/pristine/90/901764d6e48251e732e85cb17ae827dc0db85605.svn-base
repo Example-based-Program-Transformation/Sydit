@@ -1,0 +1,43 @@
+package changeassistant.crystal.analysis;
+
+import org.eclipse.jdt.core.dom.ASTNode;
+
+import changeassistant.peers.SourceCodeRange;
+
+public class DominateLE {
+
+	public SourceCodeRange range;
+	
+	protected DominateLE(){
+		range = new SourceCodeRange(-1, -1);
+	}
+	
+	public DominateLE(SourceCodeRange range){
+		this.range = range;
+	}
+	
+	public DominateLE(DominateLE le){
+		this.range = le.range;
+	}
+
+	public static DominateLE bottom(){
+		return new DominateLE();
+	}
+	
+	public boolean equals(Object obj){
+		if(!(obj instanceof DominateLE))
+			return false;
+		DominateLE other = (DominateLE)obj;
+		if(!this.range.equals(other.range)) 
+			return false; 
+		return true;
+	}
+	
+	public int hashCode(){
+		return this.range.hashCode();
+	}
+	
+	public String toString(){
+		return this.range.toString();
+	}
+}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="277"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa/src/org/eclipse/jdt/internal/compiler/lookup"
+   committed-rev="277"
+   kind="dir"
+   committed-date="2012-04-27T14:36:15.016000Z"/>
+<entry
+   name="PPASourceTypeBinding.java"
+   checksum="2be21fbecea00518d0d6fef025b5bc32"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:21.000000Z"/>
+<entry
+   name="PPAType.java"
+   checksum="9f8b416523ce01522649d4a3943e10af"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:19.000000Z"/>
+<entry
+   name="PPATypeBinding.java"
+   checksum="3c0ddf3f817a3cc476201bfcede4caf5"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:17.000000Z"/>
+<entry
+   name="PPATypeBindingOptions.java"
+   checksum="3ee4e52534301f90738c19f6fc9ce7b5"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"/>
+</wc-entries>

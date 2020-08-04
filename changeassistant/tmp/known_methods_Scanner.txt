@@ -1,0 +1,679 @@
+//org.eclipse.jdt.internal.compiler.parser.Scanner
+public final int getNextChar() {
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+				getNextUnicodeChar();
+		} else {
+			this.unicodeAsBackSlash = false;
+			if (this.withoutUnicodePtr != 0) {
+			    unicodeStoreAt(++this.withoutUnicodePtr);
+			}
+		}
+		return this.currentCharacter;
+	} catch (IndexOutOfBoundsException e) {
+		return -1;
+	} catch(InvalidInputException e) {
+		return -1;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.compiler.parser.Scanner
+public final boolean getNextChar(char testedChar) {
+if (this.currentPosition >= this.source.length) {
+		this.unicodeAsBackSlash = false;
+		return false;
+	}
+
+	int temp = this.currentPosition;
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			getNextUnicodeChar();
+			if (this.currentCharacter != testedChar) {
+				this.currentPosition = temp;
+				this.withoutUnicodePtr--;
+				return false;
+			}
+			return true;
+		} 
+		else {
+			if (this.currentCharacter != testedChar) {
+				this.currentPosition = temp;
+				return false;
+			}
+			this.unicodeAsBackSlash = false;
+			if (this.withoutUnicodePtr != 0)
+				unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.unicodeAsBackSlash = false;
+		this.currentPosition = temp;
+		return false;
+	} catch(InvalidInputException e) {
+		this.unicodeAsBackSlash = false;
+		this.currentPosition = temp;
+		return false;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.compiler.parser.Scanner
+public final void getNextUnicodeChar()
+	throws InvalidInputException {
+	try {
+		int c1 = 0, c2 = 0, c3 = 0, c4 = 0, unicodeSize = 6;
+		this.currentPosition++;
+		while (this.source[this.currentPosition] == 'u') {
+			this.currentPosition++;
+			unicodeSize++;
+		}
+
+		if ((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c1 < 0
+			|| (c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c2 < 0
+			|| (c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c3 < 0
+			|| (c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c4 < 0){
+			throw new InvalidInputException(INVALID_UNICODE_ESCAPE);
+		}
+		this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+		if (this.withoutUnicodePtr == 0) {
+			unicodeInitializeBuffer(this.currentPosition - unicodeSize - this.startPosition);
+		}
+		unicodeStoreAt(++this.withoutUnicodePtr);
+		this.unicodeAsBackSlash = this.currentCharacter == '\\';
+	} catch (ArrayIndexOutOfBoundsException e) {
+		this.currentPosition--;
+		throw new InvalidInputException(INVALID_UNICODE_ESCAPE);
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.compiler.parser.Scanner
+public final boolean jumpOverUnicodeWhiteSpace() throws InvalidInputException {
+	try {
+		this.wasAcr = false;
+		getNextUnicodeChar();
+		return CharOperation.isWhitespace(this.currentCharacter);
+	} catch (IndexOutOfBoundsException e){
+		this.currentPosition--;
+		throw new InvalidInputException(INVALID_UNICODE_ESCAPE);
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.compiler.parser.Scanner.getNextChar(char, char)
+public final int getNextChar(char testedChar1, char testedChar2) {
+    if (this.currentPosition >= this.source.length)
+		return -1;
+
+	int temp = this.currentPosition;
+	try {
+		int result;
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			getNextUnicodeChar();
+			if (this.currentCharacter == testedChar1) {
+				result = 0;
+			} else if (this.currentCharacter == testedChar2) {
+				result = 1;
+			} else {
+				this.currentPosition = temp;
+				this.withoutUnicodePtr--;
+				result = -1;
+			}
+			return result;
+		} else {
+			if (this.currentCharacter == testedChar1) {
+				result = 0;
+			} else if (this.currentCharacter == testedChar2) {
+				result = 1;
+			} else {
+				this.currentPosition = temp;
+				return -1;
+			}
+
+			if (this.withoutUnicodePtr != 0)
+				unicodeStoreAt(++this.withoutUnicodePtr);
+			return result;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.currentPosition = temp;
+		return -1;
+	} catch(InvalidInputException e) {
+		this.currentPosition = temp;
+		return -1;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.compiler.parser.Scanner
+public final boolean getNextCharAsDigit() throws InvalidInputException {
+if (this.currentPosition >= this.source.length) 
+		return false;
+
+	int temp = this.currentPosition;
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			getNextUnicodeChar();
+			if (!isDigit(this.currentCharacter)) {
+				this.currentPosition = temp;
+				this.withoutUnicodePtr--;
+				return false;
+			}
+			return true;
+		} else {
+			if (!isDigit(this.currentCharacter)) {
+				this.currentPosition = temp;
+				return false;
+			}
+			if (this.withoutUnicodePtr != 0)
+				unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.currentPosition = temp;
+		return false;
+	} catch(InvalidInputException e) {
+		this.currentPosition = temp;
+		return false;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.compiler.parser.Scanner
+public final boolean getNextCharAsDigit(int radix) {
+if (this.currentPosition >= this.source.length) 
+		return false;
+
+	int temp = this.currentPosition;
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			getNextUnicodeChar();
+			if (Character.digit(this.currentCharacter, radix) == -1) {
+				this.currentPosition = temp;
+				this.withoutUnicodePtr--;
+				return false;
+			}
+			return true;
+		} else {
+			if (Character.digit(this.currentCharacter, radix) == -1) {
+				this.currentPosition = temp;
+				return false;
+			}
+			if (this.withoutUnicodePtr != 0)
+				unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.currentPosition = temp;
+		return false;
+	} catch(InvalidInputException e) {
+		this.currentPosition = temp;
+		return false;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.compiler.parser.Scanner
+public boolean getNextCharAsJavaIdentifierPart() {
+if (this.currentPosition >= this.source.length)
+		return false;
+
+	int temp = this.currentPosition;
+	int temp2 = this.withoutUnicodePtr;
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			getNextUnicodeChar();
+			if (!isJavaIdentifierPart(this.currentCharacter)) {
+				this.currentPosition = temp;
+				this.withoutUnicodePtr = temp2;
+				return false;
+			}
+			return true;
+		} else {
+			if (!isJavaIdentifierPart(this.currentCharacter)) {
+				this.currentPosition = temp;
+				this.withoutUnicodePtr = temp2;
+				return false;
+			}
+
+			if (this.withoutUnicodePtr != 0)
+			    unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.currentPosition = temp;
+		this.withoutUnicodePtr = temp2;
+		return false;
+	} catch(InvalidInputException e) {
+		this.currentPosition = temp;
+		this.withoutUnicodePtr = temp2;
+		return false;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.core.util.PublicScanner
+public final int getNextChar() {
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+		
+			int c1, c2, c3, c4;
+			int unicodeSize = 6;
+			this.currentPosition++;
+			while (this.source[this.currentPosition] == 'u') {
+				this.currentPosition++;
+				unicodeSize++;
+			}
+
+			if (((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+				|| c1 < 0)
+				|| ((c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0)
+				|| ((c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0)
+				|| ((c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0)) {
+				return -1;
+			}
+
+			this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+
+			this.unicodeAsBackSlash = this.currentCharacter == '\\';
+
+			
+			if (this.withoutUnicodePtr == 0) {
+				
+			    unicodeInitializeBuffer(this.currentPosition - unicodeSize - this.startPosition);
+			}
+			
+			unicodeStoreAt(++this.withoutUnicodePtr);
+			return this.currentCharacter;
+
+		} 
+		else {
+			this.unicodeAsBackSlash = false;
+			if (this.withoutUnicodePtr != 0) {
+			    unicodeStoreAt(++this.withoutUnicodePtr);
+			}
+			return this.currentCharacter;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		return -1;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.core.util.PublicScanner
+public final boolean getNextChar(char testedChar) {
+if (this.currentPosition >= this.source.length) { 
+		this.unicodeAsBackSlash = false;
+		return false;
+	}
+
+	int temp = this.currentPosition;
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			
+			int c1, c2, c3, c4;
+			int unicodeSize = 6;
+			this.currentPosition++;
+			while (this.source[this.currentPosition] == 'u') {
+				this.currentPosition++;
+				unicodeSize++;
+			}
+
+			if (((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+				|| c1 < 0)
+				|| ((c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0)
+				|| ((c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0)
+				|| ((c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0)) {
+				this.currentPosition = temp;
+				return false;
+			}
+
+			this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+			if (this.currentCharacter != testedChar) {
+				this.currentPosition = temp;
+				return false;
+			}
+			this.unicodeAsBackSlash = this.currentCharacter == '\\';
+
+			
+			if (this.withoutUnicodePtr == 0) {
+				
+			    unicodeInitializeBuffer(this.currentPosition - unicodeSize - this.startPosition);
+			}
+			
+			unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+
+		} 
+		else {
+			if (this.currentCharacter != testedChar) {
+				this.currentPosition = temp;
+				return false;
+			}
+			this.unicodeAsBackSlash = false;
+			if (this.withoutUnicodePtr != 0)
+				unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.unicodeAsBackSlash = false;
+		this.currentPosition = temp;
+		return false;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.core.util.PublicScanner
+public final int getNextChar(char testedChar1, char testedChar2) {
+if (this.currentPosition >= this.source.length)
+		return -1;
+
+	int temp = this.currentPosition;
+	try {
+		int result;
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			
+			int c1, c2, c3, c4;
+			int unicodeSize = 6;
+			this.currentPosition++;
+			while (this.source[this.currentPosition] == 'u') {
+				this.currentPosition++;
+				unicodeSize++;
+			}
+
+			if (((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+				|| c1 < 0)
+				|| ((c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0)
+				|| ((c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0)
+				|| ((c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0)) {
+				this.currentPosition = temp;
+				return 2;
+			}
+
+			this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+			if (this.currentCharacter == testedChar1)
+				result = 0;
+			else
+				if (this.currentCharacter == testedChar2)
+					result = 1;
+				else {
+					this.currentPosition = temp;
+					return -1;
+				}
+
+			
+			if (this.withoutUnicodePtr == 0) {
+			
+				unicodeInitializeBuffer(this.currentPosition - unicodeSize - this.startPosition);
+			}
+		
+			unicodeStoreAt(++this.withoutUnicodePtr);
+			return result;
+		} 
+		else {
+			if (this.currentCharacter == testedChar1)
+				result = 0;
+			else
+				if (this.currentCharacter == testedChar2)
+					result = 1;
+				else {
+					this.currentPosition = temp;
+					return -1;
+				}
+
+			if (this.withoutUnicodePtr != 0)
+				unicodeStoreAt(++this.withoutUnicodePtr);
+			return result;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.currentPosition = temp;
+		return -1;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.core.util.PublicScanner
+public final boolean getNextCharAsDigit() throws InvalidInputException {
+if (this.currentPosition >= this.source.length) 
+		return false;
+
+	int temp = this.currentPosition;
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+		
+			int c1, c2, c3, c4;
+			int unicodeSize = 6;
+			this.currentPosition++;
+			while (this.source[this.currentPosition] == 'u') {
+				this.currentPosition++;
+				unicodeSize++;
+			}
+
+			if (((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+				|| c1 < 0)
+				|| ((c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0)
+				|| ((c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0)
+				|| ((c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0)) {
+				this.currentPosition = temp;
+				return false;
+			}
+
+			this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+			if (!isDigit(this.currentCharacter)) {
+				this.currentPosition = temp;
+				return false;
+			}
+
+		
+			if (this.withoutUnicodePtr == 0) {
+				
+				unicodeInitializeBuffer(this.currentPosition - unicodeSize - this.startPosition);
+			}
+		
+			unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+		else {
+			if (!isDigit(this.currentCharacter)) {
+				this.currentPosition = temp;
+				return false;
+			}
+			if (this.withoutUnicodePtr != 0)
+				unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.currentPosition = temp;
+		return false;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.core.util.PublicScanner
+public final boolean getNextCharAsDigit(int radix) {
+if (this.currentPosition >= this.source.length) 
+		return false;
+
+	int temp = this.currentPosition;
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			
+			int c1, c2, c3, c4;
+			int unicodeSize = 6;
+			this.currentPosition++;
+			while (this.source[this.currentPosition] == 'u') {
+				this.currentPosition++;
+				unicodeSize++;
+			}
+
+			if (((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+				|| c1 < 0)
+				|| ((c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0)
+				|| ((c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0)
+				|| ((c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0)) {
+				this.currentPosition = temp;
+				return false;
+			}
+
+			this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+			if (Character.digit(this.currentCharacter, radix) == -1) {
+				this.currentPosition = temp;
+				return false;
+			}
+
+			
+			if (this.withoutUnicodePtr == 0) {
+				
+				unicodeInitializeBuffer(this.currentPosition - unicodeSize - this.startPosition);
+			}
+	
+			unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		} 
+		else {
+			if (Character.digit(this.currentCharacter, radix) == -1) {
+				this.currentPosition = temp;
+				return false;
+			}
+			if (this.withoutUnicodePtr != 0)
+				unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.currentPosition = temp;
+		return false;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.core.util.PublicScanner
+public boolean getNextCharAsJavaIdentifierPart() {
+if (this.currentPosition >= this.source.length) 
+		return false;
+
+	int temp = this.currentPosition;
+	try {
+		if (((this.currentCharacter = this.source[this.currentPosition++]) == '\\')
+			&& (this.source[this.currentPosition] == 'u')) {
+			
+			int c1, c2, c3, c4;
+			int unicodeSize = 6;
+			this.currentPosition++;
+			while (this.source[this.currentPosition] == 'u') {
+				this.currentPosition++;
+				unicodeSize++;
+			}
+
+			if (((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+				|| c1 < 0)
+				|| ((c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0)
+				|| ((c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0)
+				|| ((c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0)) {
+				this.currentPosition = temp;
+				return false;
+			}
+
+			this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+			if (!Character.isJavaIdentifierPart(this.currentCharacter)) {
+				this.currentPosition = temp;
+				return false;
+			}
+
+		
+			if (this.withoutUnicodePtr == 0) {
+			
+				unicodeInitializeBuffer(this.currentPosition - unicodeSize - this.startPosition);
+			}
+			
+		    unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+		else {
+			if (!Character.isJavaIdentifierPart(this.currentCharacter)) {
+				this.currentPosition = temp;
+				return false;
+			}
+
+			if (this.withoutUnicodePtr != 0)
+			    unicodeStoreAt(++this.withoutUnicodePtr);
+			return true;
+		}
+	} catch (IndexOutOfBoundsException e) {
+		this.currentPosition = temp;
+		return false;
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.core.util.PublicScanner
+public final void getNextUnicodeChar()
+	throws InvalidInputException {
+		try {
+		int c1 = 0, c2 = 0, c3 = 0, c4 = 0, unicodeSize = 6;
+		this.currentPosition++;
+		while (this.source[this.currentPosition] == 'u') {
+			this.currentPosition++;
+			unicodeSize++;
+		}
+
+		if ((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c1 < 0
+			|| (c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c2 < 0
+			|| (c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c3 < 0
+			|| (c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c4 < 0){
+			throw new InvalidInputException(INVALID_UNICODE_ESCAPE);
+		} else {
+			this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+			
+			if (this.withoutUnicodePtr == 0) {
+				
+				unicodeInitializeBuffer(this.currentPosition - unicodeSize - this.startPosition);
+			}
+			
+			unicodeStoreAt(++this.withoutUnicodePtr);
+		}
+		this.unicodeAsBackSlash = this.currentCharacter == '\\';
+	} catch (ArrayIndexOutOfBoundsException e) {
+		this.currentPosition--;
+		throw new InvalidInputException(INVALID_UNICODE_ESCAPE);
+	}
+}
+//end of method
+//org.eclipse.jdt.internal.core.util.PublicScanner
+public final boolean jumpOverUnicodeWhiteSpace() throws InvalidInputException {
+try {
+		this.wasAcr = false;
+		int c1, c2, c3, c4;
+		int unicodeSize = 6;
+		this.currentPosition++;
+		while (this.source[this.currentPosition] == 'u') {
+			this.currentPosition++;
+			unicodeSize++;
+		}
+
+		if (((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15
+			|| c1 < 0)
+			|| ((c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0)
+			|| ((c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0)
+			|| ((c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0)) {
+			throw new InvalidInputException(INVALID_UNICODE_ESCAPE);
+		}
+
+		this.currentCharacter = (char) (((c1 * 16 + c2) * 16 + c3) * 16 + c4);
+		if (CharOperation.isWhitespace(this.currentCharacter))
+			return true;
+
+		
+		unicodeStoreAt(++this.withoutUnicodePtr);
+		
+		return false;
+	} catch (IndexOutOfBoundsException e){
+		this.currentPosition--;
+		throw new InvalidInputException(INVALID_UNICODE_ESCAPE);
+	}
+}
+//end of method

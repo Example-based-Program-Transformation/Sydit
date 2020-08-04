@@ -1,0 +1,38 @@
+package changeassistant.crystal.analysis.postdominate;
+
+import changeassistant.crystal.analysis.DominateLE;
+import edu.cmu.cs.crystal.simple.SimpleLatticeOperations;
+
+public class PostDominateLatticeOps extends SimpleLatticeOperations<DominateLE> {
+
+	/**
+	 * this is not called
+	 */
+	@Override
+	public boolean atLeastAsPrecise(DominateLE left, DominateLE right) {
+		// TODO Auto-generated method stub
+		System.out.print("This should be invoked");
+		return false;
+	}
+
+	@Override
+	public DominateLE bottom() {
+		// TODO Auto-generated method stub
+		return DominateLE.bottom();
+	}
+
+	@Override
+	public DominateLE copy(DominateLE original) {
+		// TODO Auto-generated method stub
+		return new DominateLE(original);
+	}
+
+	/**
+	 * this is not called
+	 */
+	@Override
+	public DominateLE join(DominateLE left, DominateLE right) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

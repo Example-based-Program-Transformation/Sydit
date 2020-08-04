@@ -1,0 +1,523 @@
+package changeassistant.crystal.analysis.def;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import changeassistant.crystal.FieldVariable;
+import changeassistant.internal.ASTElementSearcher;
+import changeassistant.main.ChangeAssistantMain;
+import changeassistant.peers.SourceCodeRange;
+import edu.cmu.cs.crystal.flow.AnalysisDirection;
+import edu.cmu.cs.crystal.flow.ILatticeOperations;
+import edu.cmu.cs.crystal.simple.AbstractingTransferFunction;
+import edu.cmu.cs.crystal.simple.TupleLatticeElement;
+import edu.cmu.cs.crystal.simple.TupleLatticeOperations;
+import edu.cmu.cs.crystal.tac.eclipse.CompilationUnitTACs;
+import edu.cmu.cs.crystal.tac.eclipse.EclipseTAC;
+import edu.cmu.cs.crystal.tac.model.ArrayInitInstruction;
+import edu.cmu.cs.crystal.tac.model.BinaryOperation;
+import edu.cmu.cs.crystal.tac.model.CastInstruction;
+import edu.cmu.cs.crystal.tac.model.ConstructorCallInstruction;
+import edu.cmu.cs.crystal.tac.model.CopyInstruction;
+import edu.cmu.cs.crystal.tac.model.DotClassInstruction;
+import edu.cmu.cs.crystal.tac.model.EnhancedForConditionInstruction;
+import edu.cmu.cs.crystal.tac.model.InstanceofInstruction;
+import edu.cmu.cs.crystal.tac.model.LoadArrayInstruction;
+import edu.cmu.cs.crystal.tac.model.LoadFieldInstruction;
+import edu.cmu.cs.crystal.tac.model.LoadLiteralInstruction;
+import edu.cmu.cs.crystal.tac.model.MethodCallInstruction;
+import edu.cmu.cs.crystal.tac.model.NewArrayInstruction;
+import edu.cmu.cs.crystal.tac.model.NewObjectInstruction;
+import edu.cmu.cs.crystal.tac.model.OneOperandInstruction;
+import edu.cmu.cs.crystal.tac.model.ReturnInstruction;
+import edu.cmu.cs.crystal.tac.model.SourceVariable;
+import edu.cmu.cs.crystal.tac.model.SourceVariableDeclaration;
+import edu.cmu.cs.crystal.tac.model.SourceVariableReadInstruction;
+import edu.cmu.cs.crystal.tac.model.StoreArrayInstruction;
+import edu.cmu.cs.crystal.tac.model.StoreFieldInstruction;
+import edu.cmu.cs.crystal.tac.model.TACInstruction;
+import edu.cmu.cs.crystal.tac.model.TempVariable;
+import edu.cmu.cs.crystal.tac.model.UnaryOperation;
+import edu.cmu.cs.crystal.tac.model.Variable;
+import edu.cmu.cs.crystal.util.Utilities;
+
+public class DefUseTransferFunction extends
+		AbstractingTransferFunction<TupleLatticeElement<Variable, DefUseLE>> {
+
+	private Map<TempVariable, TupleLatticeElement<Variable, DefUseLE>> variableContext;
+	// map between temp variable and source variable/field variable
+
+	private EclipseTAC tac;// default tac
+
+	private CompilationUnitTACs cTac;
+
+	private MethodDeclaration d;
+
+	private ASTElementSearcher searcher;
+
+	public DefUseTransferFunction(CompilationUnitTACs tac, MethodDeclaration d) {
+		this.d = d;
+		this.searcher = new ASTElementSearcher(d);
+		this.cTac = tac;
+		this.tac = tac.getMethodTAC(d);
+		this.variableContext = new HashMap<TempVariable, TupleLatticeElement<Variable, DefUseLE>>();
+	}
+
+	private final TupleLatticeOperations<Variable, DefUseLE> ops = new TupleLatticeOperations<Variable, DefUseLE>(
+			new DefUseLatticeOps(), DefUseLE.bottom());
+
+	@Override
+	public ILatticeOperations<TupleLatticeElement<Variable, DefUseLE>> getLatticeOperations() {
+		return ops;
+	}
+
+	@Override
+	public TupleLatticeElement<Variable, DefUseLE> createEntryValue(
+			MethodDeclaration method) {
+		return ops.getDefault();
+	}
+
+	public AnalysisDirection getAnalysisDirection() {
+		return AnalysisDirection.FORWARD_ANALYSIS;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			ArrayInitInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+
+		addUse(value, instr.getInitOperands());
+		addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			BinaryOperation binop, TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(binop, value);
+		addUse(value, binop.getOperand1());
+		addUse(value, binop.getOperand2());
+		addDef(value, binop.getTarget(), binop.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			CastInstruction instr, TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		Variable operand = instr.getOperand();
+		addUse(value, instr.getOperand());
+		addDef(value, operand, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			ConstructorCallInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getArgOperands());
+		return value;
+	}
+
+	/**
+	 * This method is not needed since the addDef() is already called in another
+	 * transfer function
+	 */
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			CopyInstruction instr, TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		Variable operand = instr.getOperand();
+		addUse(value, operand);
+		addDef(value, operand, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			DotClassInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			EnhancedForConditionInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getIteratedOperand());
+
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			InstanceofInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getOperand());
+		addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			LoadArrayInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getSourceArray());
+		addUse(value, instr.getArrayIndex());
+		addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			LoadFieldInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		FieldVariable fieldVariable = new FieldVariable(
+				instr.getAccessedObjectOperand(), instr.getFieldName());
+		addUse(value, fieldVariable);
+		addDef(value, fieldVariable, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	/**
+	 * The method is used to keep mapping between temp variables and number
+	 * literals
+	 */
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			LoadLiteralInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		// prepare(instr, value);
+		// addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			MethodCallInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+
+		if (instr.getReceiverOperand() != null) {
+			// for fContainer.processContent() methods, we need to first connect
+			// the variable to the field, and then append def
+			Variable receiver = instr.getReceiverOperand();
+			addUse(value, receiver);
+		}
+		addUse(value, instr.getArgOperands());
+		addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			NewArrayInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getDimensionOperands());
+		if (instr.isInitialized()) {
+			addUse(value, instr.getInitOperand());
+		}
+		addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			NewObjectInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getArgOperands());
+		addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			OneOperandInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getOperand());
+		addDef(value, instr.getTarget(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			ReturnInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		try {
+			if (instr.getReturnedVariable() != null)
+				addUse(value, instr.getReturnedVariable());
+		} catch (Exception e) {
+			// do nothing
+		}
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			StoreArrayInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getArrayIndex());
+		addUse(value, instr.getSourceOperand());
+		appendDef(value, instr.getDestinationArray(), instr.getNode());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			StoreFieldInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {// the field is not
+															// recorded here
+		prepare(instr, value);
+		try {
+			addUse(value, instr.getSourceOperand());
+			FieldVariable fieldVariable = new FieldVariable(
+					instr.getAccessedObjectOperand(), instr.getFieldName());
+			addDef(value, fieldVariable, instr.getNode());
+		} catch (Exception e) {
+			// ignore
+		}
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			SourceVariableDeclaration instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		if (instr.getDeclaredVariable() != null) {
+			addDef(value, instr.getDeclaredVariable(), instr.getNode());
+		}
+		return value;
+	}
+
+	// To read a variable--this has nothing to do with def
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			SourceVariableReadInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(instr, value);
+		addUse(value, instr.getVariable());
+		return value;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> transfer(
+			UnaryOperation unop, TupleLatticeElement<Variable, DefUseLE> value) {
+		prepare(unop, value);
+		addUse(value, unop.getOperand());
+		addDef(value, unop.getTarget(), unop.getNode());
+		return value;
+	}
+
+	private void prepare(TACInstruction instr,
+			TupleLatticeElement<Variable, DefUseLE> value) {
+		// log(instr, value);
+		if (ChangeAssistantMain.DEBUG) {
+			System.out.print("ASTNode:" + instr.getNode().toString()
+					+ " INSTRUCTION:" + instr.toString());
+		}
+
+		// SourceCodeRange scr = new
+		// SourceCodeRange(instr.getNode().getStartPosition(),
+		// instr.getNode().getLength());
+		// if(tac.instruction(instr.getNode()).equals(instr)){
+		// System.out.println("They are the same!");
+		// }
+
+		// if(!tacMap.containsKey(scr)){
+		// tacMap.put(scr, instr);
+		// System.out.println(instr.toString());
+		// }
+		// Set<Variable> keySet = value.getKeySet();
+		// for(Variable key : keySet){
+		// System.out.print("\n");
+		// System.out.print(key.toString()+ "---");
+		// System.out.print("DEF: ");
+		// Set<SourceCodeRange> scrs = value.get(key).defs;
+		// for(SourceCodeRange scr : scrs){
+		// System.out.print(tacMap.get(scr).getNode().toString() + " ");
+		// }
+		// System.out.print("USE: ");
+		// scrs = value.get(key).uses;
+		// for(SourceCodeRange scr : scrs){
+		// System.out.print(tacMap.get(scr).getNode().toString() + " ");
+		// }
+		// }
+		clearUses(value);
+	}
+
+	// private void log(TACInstruction instr, TupleLatticeElement<Variable,
+	// DefUseLE> value){
+	// if(log.isLoggable(Level.FINER)){
+	// //compute the first line of the source text correponding to the
+	// instruction's ASTNode
+	// String sourceText = instr.getNode().toString();
+	// int endOfLine = sourceText.indexOf('\n');
+	// String firstLine;
+	// //if there is more than 1 line
+	// if(endOfLine > 0){
+	// firstLine = sourceText.substring(0, endOfLine);
+	// }else{
+	// firstLine = sourceText;
+	// }
+	// //to output the first line's text
+	// System.out.println(instr + ":" + firstLine);
+	// DefUseAnalysis.instance.printLattice(value);
+	// }
+	// }
+	/**
+	 * add def if var is equivalent to a source variable
+	 */
+	private void addDef(TupleLatticeElement<Variable, DefUseLE> value,
+			Variable var, ASTNode astNode) {
+		if (var == null || astNode == null)
+			return;
+		DefUseLE targetLE = null;
+		targetLE = new DefUseLE(value.get(var));
+		targetLE.defs.clear();
+		targetLE.defs.add(new SourceCodeRange(astNode.getStartPosition(),
+				astNode.getLength()));
+		value.put(var, targetLE);
+		if (var instanceof TempVariable) {
+			variableContext.put((TempVariable) var, value);
+		}
+	}
+
+	/**
+	 * add def if var is equivalent to a source variable, otherwise, if add map
+	 * between temp variable and a source variable if var is a temp variable and
+	 * operand is equivalent to a source variable
+	 * 
+	 * @param value
+	 * @param operand
+	 * @param var
+	 * @param astNode
+	 */
+	private void addDef(TupleLatticeElement<Variable, DefUseLE> value,
+			Variable operand, Variable var, ASTNode astNode) {
+		if (operand == null || var == null || astNode == null)
+			return;
+		DefUseLE targetLE = null;
+		targetLE = new DefUseLE(value.get(var));
+		targetLE.defs.clear();
+		targetLE.defs.add(new SourceCodeRange(astNode.getStartPosition(),
+				astNode.getLength()));
+		value.put(var, targetLE);
+		if (var instanceof TempVariable) {
+			variableContext.put((TempVariable) var, value);
+		}
+	}
+
+	/**
+	 * Only add use of source variable, but do not care about temp variable
+	 * 
+	 * @param value
+	 * @param vars
+	 */
+	private void addUse(TupleLatticeElement<Variable, DefUseLE> value,
+			List<Variable> vars) {
+		if (vars == null)
+			return;
+		for (int i = 0; i < vars.size(); i++) {
+			addUse(value, vars.get(i));
+		}
+	}
+
+	/**
+	 * to add use to a field
+	 * 
+	 * @param value
+	 * @param var
+	 * @param fieldName
+	 */
+	private void addUse(TupleLatticeElement<Variable, DefUseLE> value,
+			Variable var) {
+		if (var == null)
+			return;
+		if (var instanceof SourceVariable || var instanceof FieldVariable) {
+			DefUseLE knownLE = new DefUseLE(value.get(var));// we
+															// assume
+															// that
+															// this
+															// variable
+															// should
+															// already
+															// be
+															// defined
+			if (!knownLE.isEmpty()) {
+				knownLE.uses.addAll(knownLE.defs);// all reaching definition can
+													// be used here
+				value.put(var, knownLE);
+			}
+		} else if (var instanceof TempVariable) {// var instanceof TempVariable
+			TupleLatticeElement<Variable, DefUseLE> tmpValue = variableContext
+					.get(var);
+			if (tmpValue != null) {
+				for (Variable v : tmpValue.getKeySet()) {
+					if (!(v instanceof TempVariable)
+							&& !tmpValue.get(v).uses.isEmpty()) {
+						value.get(v).uses.addAll(tmpValue.get(v).uses);
+					}
+				}
+			}
+		}
+	}
+
+	private void clearUses(TupleLatticeElement<Variable, DefUseLE> value) {
+		Set<Variable> vars = value.getKeySet();
+		for (Variable var : vars) {
+			value.get(var).uses.clear();
+		}
+	}
+
+	/**
+	 * for Array case, the def is appended
+	 * 
+	 * @param value
+	 * @param variable
+	 * @param astNode
+	 * @return
+	 */
+	private void appendDef(TupleLatticeElement<Variable, DefUseLE> value,
+			Variable variable, ASTNode astNode) {
+		DefUseLE le = new DefUseLE(value.get(variable));
+		le.defs.add(new SourceCodeRange(astNode.getStartPosition(), astNode
+				.getLength()));
+		value.put(variable, le);
+	}
+
+	private TACInstruction getInstruction(ASTNode astNode) {
+		TACInstruction tmp = null;
+		try {
+			tmp = this.tac.instruction(astNode);
+		} catch (Exception e) {
+			MethodDeclaration innerMd = Utilities.getMethodDeclaration(astNode);
+			EclipseTAC tempTac = cTac.getMethodTAC(innerMd);
+			tmp = tempTac.instruction(astNode);
+		}
+		return tmp;
+	}
+	/**
+	 * if the target is source variable, add def for it; if the target is temp
+	 * variable, include it in variableContext
+	 * 
+	 * @param value
+	 * @param operand
+	 * @param target
+	 * @param astNode
+	 */
+	// private void processTarget(TupleLatticeElement<Variable, DefUseLE>value,
+	// Variable operand,
+	// Variable target,
+	// ASTNode astNode){
+	// if(target instanceof TempVariable){
+	// if(operand instanceof SourceVariable){
+	// this.variableContext.put((TempVariable)target, (SourceVariable)operand);
+	// }else if(operand instanceof TempVariable){
+	//
+	// }
+	//
+	// }else if(target instanceof SourceVariable){
+	// addDef(value, target, astNode);
+	// }else{
+	// System.out.println("The defined variable is not temp or source variable");
+	// }
+	// }
+}

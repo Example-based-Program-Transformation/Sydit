@@ -1,0 +1,20 @@
+package changeassistant.versions.treematching.edits;
+
+import java.io.Serializable;
+
+import changeassistant.peers.comparison.Node;
+
+public interface ITreeEditOperation<T> extends Serializable {
+
+	public enum EDIT{INSERT, DELETE, UPDATE, MOVE, EMPTY}
+	
+	public EDIT getOperationType();
+	
+	public void apply();
+	
+	public void apply(int index);
+
+	public T getParentNode();
+	
+	public T getNode();
+}

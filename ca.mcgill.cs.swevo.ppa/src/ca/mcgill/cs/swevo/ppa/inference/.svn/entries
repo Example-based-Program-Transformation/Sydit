@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   revision="277"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa/src/ca/mcgill/cs/swevo/ppa/inference"
+   committed-rev="277"
+   kind="dir"
+   committed-date="2012-04-27T14:36:15.016000Z"/>
+<entry
+   name="ArrayAccessInferenceStrategy.java"
+   checksum="081ec3ea2641b2c62066aabf0843cda5"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:22.000000Z"/>
+<entry
+   name="AssignInferenceStrategy.java"
+   checksum="dc27d65248167959f51771afa88e2730"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:15.000000Z"/>
+<entry
+   name="BinaryInferenceStrategy.java"
+   checksum="db311cf8da7426beaea8e78834900bf4"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:19.000000Z"/>
+<entry
+   name="ConditionInferenceStrategy.java"
+   checksum="a64a739ca585ee247625cd3c601f58d3"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:19.000000Z"/>
+<entry
+   name="ConstructorInferenceStrategy.java"
+   checksum="5aec64e5158a7617e336ca488b0b3538"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:17.000000Z"/>
+<entry
+   name="FieldInferenceStrategy.java"
+   checksum="d161eb2e66f83c184749d61b4dec82f6"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:19.000000Z"/>
+<entry
+   name="MethodInferenceStrategy.java"
+   checksum="197cc182a8f5181d4d1de788a151d98d"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:21.000000Z"/>
+<entry
+   name="PostfixInferenceStrategy.java"
+   checksum="5df9176ddb1e7aa58e4127a775154b93"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:17.000000Z"/>
+<entry
+   name="PrefixInferenceStrategy.java"
+   checksum="686a715f68e35670dd55e3157d76bef6"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:17.000000Z"/>
+<entry
+   name="QNameInferenceStrategy.java"
+   checksum="71f3583a14eaadd83d13766c4de1f5aa"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:20.000000Z"/>
+<entry
+   name="ReturnInferenceStrategy.java"
+   checksum="3ed751dd8771dee57d340486f6947ac0"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:15.000000Z"/>
+<entry
+   name="TypeInferenceStrategy.java"
+   checksum="d23d7c5272ec947b305515146aa98935"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:17.000000Z"/>
+<entry
+   name="VariableDeclarationInferenceStrategy.java"
+   checksum="25793e617347649d5017f32932b5dac5"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:21.000000Z"/>
+</wc-entries>

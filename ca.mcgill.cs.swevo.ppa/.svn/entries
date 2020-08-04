@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   revision="276"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa"
+   uuid="dada1a50-f410-164a-a28e-c8f9d89772fe"
+   committed-rev="276"
+   kind="dir"
+   committed-date="2012-04-27T14:35:41.185134Z"/>
+<entry
+   name=".classpath"
+   revision="277"
+   checksum="a8459ded9c43bac1ab60e929f7330865"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:22.000000Z"/>
+<entry
+   name=".project"
+   revision="277"
+   checksum="73925c5f45497a7d47a29b70444b24b4"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:15.000000Z"/>
+<entry
+   name=".settings"
+   kind="dir"/>
+<entry
+   name="META-INF"
+   kind="dir"/>
+<entry
+   name="build.properties"
+   revision="277"
+   checksum="e24602ffaca877ab9b17c62aabd6b717"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:16.000000Z"/>
+<entry
+   name="log4j.properties"
+   revision="277"
+   checksum="0a33aca103bac7c9cc35e63930aff6fc"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:15.000000Z"/>
+<entry
+   name="progress.txt"
+   revision="277"
+   checksum="e51d6f37748470fb10d3f11963572ce3"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="277"
+   kind="file"
+   committed-date="2012-04-27T14:36:15.016000Z"
+   prop-time="2012-04-27T15:06:19.000000Z"/>
+<entry
+   name="src"
+   kind="dir"/>
+</wc-entries>

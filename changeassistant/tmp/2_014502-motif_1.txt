@@ -1,0 +1,160 @@
+14502-motif	org.eclipse.swt.dnd.DropTarget  DropTarget(Control, int)  (start position = 5153  length = 5548)
+/** 
+ * Creates a new <code>DropTarget</code> to allow data to be dropped on the specified 
+ * <code>Control</code>.
+ * Creating an instance of a DropTarget may cause system resources to be allocated 
+ * depending on the platform.  It is therefore mandatory that the DropTarget instance 
+ * be disposed when no longer required.
+ * @param control the <code>Control</code> over which the user positions the cursor to drop the data
+ * @param style the bitwise OR'ing of allowed operations; this may be a combination of any of 
+ * DND.DROP_NONE, DND.DROP_COPY, DND.DROP_MOVE, DND.DROP_LINK
+ * @exception SWTException <ul>
+ * <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
+ * <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
+ * </ul>
+ * @exception SWTError <ul>
+ * <li>ERROR_CANNOT_INIT_DROP - unable to initiate drop target; this will occur if more than one
+ * drop target is created for a control or if the operating system will not allow the creation
+ * of the drop target</li>
+ * </ul>
+ * <p>NOTE: ERROR_CANNOT_INIT_DROP should be an SWTException, since it is a
+ * recoverable error, but can not be changed due to backward compatability.</p>
+ * @see Widget#dispose
+ * @see DropTarget#checkSubclass
+ * @see DND#DROP_NONE
+ * @see DND#DROP_COPY
+ * @see DND#DROP_MOVE
+ * @see DND#DROP_LINK
+ */
+public DropTarget(Control control,int style){
+  super(control,checkStyle(style));
+  this.control=control;
+  Object effect=control.getData(DEFAULT_DRAG_SOURCE_EFFECT);
+  if (effect instanceof DragSourceEffect) {
+    dragEffect=(DragSourceEffect)effect;
+  }
+ else   if (control instanceof Tree) {
+    dragEffect=new TreeDragSourceEffect();
+  }
+ else   if (control instanceof Table) {
+    dragEffect=new TableDragSourceEffect();
+  }
+ else   if (control instanceof StyledText) {
+    effect=new StyledTextDragAndDropEffect((StyledText)control);
+  }
+ else {
+  }
+  if (DropProc == null || DragProc == null || TransferProc == null) {
+    DND.error(DND.ERROR_CANNOT_INIT_DROP);
+  }
+  if (control.getData(DROPTARGETID) != null) {
+    DND.error(DND.ERROR_CANNOT_INIT_DROP);
+  }
+  control.setData(DROPTARGETID,this);
+  controlListener=new Listener(){
+    public void handleEvent(    Event event){
+switch (event.type) {
+case SWT.Dispose:
+        if (!DropTarget.this.isDisposed()) {
+          onDispose();
+        }
+      break;
+case SWT.Show:
+    if (!registered) {
+      registerDropTarget();
+    }
+ else {
+      int[] args=new int[]{OS.XmNdropSiteActivity,OS.XmDROP_SITE_ACTIVE};
+      OS.XmDropSiteUpdate(DropTarget.this.control.handle,args,args.length / 2);
+      if (DropTarget.this.control instanceof Label) {
+        int formHandle=OS.XtParent(DropTarget.this.control.handle);
+        OS.XmDropSiteUpdate(formHandle,args,args.length / 2);
+      }
+    }
+  break;
+case SWT.Hide:
+int[] args=new int[]{OS.XmNdropSiteActivity,OS.XmDROP_SITE_INACTIVE};
+OS.XmDropSiteUpdate(DropTarget.this.control.handle,args,args.length / 2);
+if (DropTarget.this.control instanceof Label) {
+int formHandle=OS.XtParent(DropTarget.this.control.handle);
+OS.XmDropSiteUpdate(formHandle,args,args.length / 2);
+}
+break;
+}
+}
+}
+;
+control.addListener(SWT.Dispose,controlListener);
+Control c=control;
+while (c != null) {
+c.addListener(SWT.Show,controlListener);
+c.addListener(SWT.Hide,controlListener);
+c=c.getParent();
+}
+this.addListener(SWT.Dispose,new Listener(){
+public void handleEvent(Event event){
+if (DropTarget.this.control == null || DropTarget.this.control.isDisposed()) {
+return;
+}
+unregisterDropTarget();
+onDispose();
+}
+}
+);
+if (control.isVisible()) {
+registerDropTarget();
+}
+dragOverHeartbeat=new Runnable(){
+public void run(){
+Control control=DropTarget.this.control;
+if (control == null || control.isDisposed() || dragOverStart == 0) {
+return;
+}
+long time=System.currentTimeMillis();
+int delay=DRAGOVER_HYSTERESIS;
+if (time < dragOverStart) {
+delay=(int)(dragOverStart - time);
+}
+ else {
+int allowedOperations=dragOverEvent.operations;
+TransferData[] allowedTypes=dragOverEvent.dataTypes;
+TransferData[] dataTypes=new TransferData[allowedTypes.length];
+System.arraycopy(allowedTypes,0,dataTypes,0,dataTypes.length);
+DNDEvent event=new DNDEvent();
+event.widget=dragOverEvent.widget;
+event.x=dragOverEvent.x;
+event.y=dragOverEvent.y;
+event.time=(int)time;
+event.feedback=DND.FEEDBACK_SELECT;
+event.dataTypes=dataTypes;
+event.dataType=selectedDataType;
+event.operations=dragOverEvent.operations;
+event.detail=selectedOperation;
+event.item=effect.getItem(dragOverEvent.x,dragOverEvent.y);
+notifyListeners(DND.DragOver,event);
+effect.showDropTargetEffect(event.feedback,DND.DragOver,event.x,event.y);
+selectedDataType=null;
+if (event.dataType != null) {
+for (int i=0; i < allowedTypes.length; i++) {
+if (allowedTypes[i].type == event.dataType.type) {
+selectedDataType=event.dataType;
+break;
+}
+}
+}
+selectedOperation=DND.DROP_NONE;
+if (selectedDataType != null && (event.detail & allowedOperations) != 0) {
+selectedOperation=event.detail;
+}
+}
+control=DropTarget.this.control;
+if (control == null || control.isDisposed()) {
+return;
+}
+control.getDisplay().timerExec(delay,dragOverHeartbeat);
+}
+}
+;
+}
+
+There are 1 methods found and changed

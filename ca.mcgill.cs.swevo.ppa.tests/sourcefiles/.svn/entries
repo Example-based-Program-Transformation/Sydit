@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="279"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.tests/sourcefiles"
+   committed-rev="279"
+   kind="dir"
+   committed-date="2012-04-27T14:37:19.153000Z"/>
+<entry
+   name="anon"
+   kind="dir"/>
+<entry
+   name="constructor"
+   kind="dir"/>
+<entry
+   name="enum"
+   kind="dir"/>
+<entry
+   name="fields"
+   kind="dir"/>
+<entry
+   name="fqn"
+   kind="dir"/>
+<entry
+   name="generics"
+   kind="dir"/>
+<entry
+   name="inference"
+   kind="dir"/>
+<entry
+   name="methods"
+   kind="dir"/>
+<entry
+   name="parser"
+   kind="dir"/>
+<entry
+   name="syntax"
+   kind="dir"/>
+<entry
+   name="types"
+   kind="dir"/>
+<entry
+   name="util"
+   kind="dir"/>
+</wc-entries>

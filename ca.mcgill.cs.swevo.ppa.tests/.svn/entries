@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   revision="278"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.tests"
+   uuid="dada1a50-f410-164a-a28e-c8f9d89772fe"
+   committed-rev="278"
+   kind="dir"
+   committed-date="2012-04-27T14:36:58.354922Z"/>
+<entry
+   name=".classpath"
+   revision="279"
+   checksum="b0b508eaf1ded9e99e97479baafd7f13"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:31.000000Z"/>
+<entry
+   name=".project"
+   revision="279"
+   checksum="d823ac213746bd24af350f7880c3e9e0"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:24.000000Z"/>
+<entry
+   name=".settings"
+   kind="dir"/>
+<entry
+   name="META-INF"
+   kind="dir"/>
+<entry
+   name="build.properties"
+   revision="279"
+   checksum="b5c7019e40dca172be04a29918d2a7fc"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:25.000000Z"/>
+<entry
+   name="sourcefiles"
+   kind="dir"/>
+<entry
+   name="src"
+   kind="dir"/>
+<entry
+   name="test"
+   kind="dir"/>
+</wc-entries>

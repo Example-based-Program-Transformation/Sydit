@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   name=""
+   revision="283"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.ui.tests/sourcefiles"
+   committed-rev="283"
+   kind="dir"
+   committed-date="2012-04-27T14:38:32.004000Z"/>
+<entry
+   name="complete"
+   kind="dir"/>
+<entry
+   name="snippets"
+   kind="dir"/>
+</wc-entries>

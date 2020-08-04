@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   name=""
+   repos="http://giraffe.ece.utexas.edu/svn/mengna"
+   revision="279"
+   last-author="mengna"
+   url="http://giraffe.ece.utexas.edu/svn/mengna/trunk/ca.mcgill.cs.swevo.ppa.tests/test/ca/mcgill/cs/swevo/ppa/tests"
+   committed-rev="279"
+   kind="dir"
+   committed-date="2012-04-27T14:37:19.153000Z"/>
+<entry
+   name="AnonymousVisitor.java"
+   checksum="ff4f29b9126914b27acee197ad92ca6c"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:30.000000Z"/>
+<entry
+   name="FileUtil.java"
+   checksum="31286f3d85c9dbd502a0fe0d8ddff7fc"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:21.000000Z"/>
+<entry
+   name="NameVisitor.java"
+   checksum="6be2f5324198b41dc9e3cff90d3f1b0e"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:24.000000Z"/>
+<entry
+   name="PPATestsActivator.java"
+   checksum="38f5b4d218fd3186bb72161b0b86c365"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:21.000000Z"/>
+<entry
+   name="SetupTestUtil.java"
+   checksum="d4f21932834e18343b725b19794a04c0"
+   last-author="mengna"
+   text-time="2010-06-29T23:25:14.000000Z"
+   committed-rev="279"
+   kind="file"
+   committed-date="2012-04-27T14:37:19.153000Z"
+   prop-time="2012-04-27T15:07:26.000000Z"/>
+</wc-entries>

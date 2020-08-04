@@ -1,0 +1,191 @@
+//win32 org.eclipse.swt.widgets.ExpandBar
+LRESULT WM_KEYDOWN (int wParam, int lParam) {
+	LRESULT result = super.WM_KEYDOWN (wParam, lParam);
+	if (result != null) return result;
+	if (focusItem == null) return result;
+	switch (wParam) {
+		case OS.VK_SPACE:
+		case OS.VK_RETURN:
+			Event event = new Event ();
+			event.item = focusItem;
+			sendEvent (focusItem.expanded ? SWT.Collapse : SWT.Expand, event);
+			focusItem.expanded = !focusItem.expanded;
+			showItem (focusItem);
+			return LRESULT.ZERO;
+		case OS.VK_UP: {
+			int focusIndex = indexOf (focusItem);
+			if (focusIndex > 0) {
+				focusItem.redraw (true);
+				focusItem = items [focusIndex - 1];
+				focusItem.redraw (true);
+				return LRESULT.ZERO;
+			}
+			break;
+		}
+		case OS.VK_DOWN: {
+			int focusIndex = indexOf (focusItem);
+			if (focusIndex < itemCount - 1) {
+				focusItem.redraw (true);
+				focusItem = items [focusIndex + 1];
+				focusItem.redraw (true);
+				return LRESULT.ZERO;
+			}
+			break;
+		}
+	}
+	return result;
+}
+//end of method
+//win32 org.eclipse.swt.widgets.ExpandBar
+LRESULT WM_LBUTTONUP (int wParam, int lParam) {
+	LRESULT result = super.WM_LBUTTONUP (wParam, lParam);
+	if (result == LRESULT.ZERO) return result;
+	if (focusItem == null) return result;
+	int x = (short) (lParam & 0xFFFF);
+	int y = (short) (lParam >> 16);
+	boolean hover = focusItem.x <= x && x < (focusItem.x + focusItem.width) && focusItem.y <= y && y < (focusItem.y + getBandHeight()); 
+	if (hover) {
+		Event event = new Event ();
+		event.item = focusItem;
+		sendEvent (focusItem.expanded ? SWT.Collapse : SWT.Expand, event);
+		focusItem.expanded = !focusItem.expanded;
+		showItem (focusItem);
+	}
+	return result;
+}
+//end of method
+//photon org.eclipse.swt.widgets.ExpandBar
+void onKeyDown (Event event) {
+	if (focusItem == null) return;
+	switch (event.keyCode) {
+		case 13: /* Return */
+		case 32: /* Space */
+			Event ev = new Event ();
+			ev.item = focusItem;
+			sendEvent (focusItem.expanded ? SWT.Collapse :SWT.Expand, ev);
+			focusItem.expanded = !focusItem.expanded;
+			showItem (focusItem);
+			break;
+		case SWT.ARROW_UP: {
+			int focusIndex = indexOf (focusItem);
+			if (focusIndex > 0) {
+				focusItem.redraw ();
+				focusItem = items [focusIndex - 1];
+				focusItem.redraw ();
+			}
+			break;
+		}
+		case SWT.ARROW_DOWN: {
+			int focusIndex = indexOf (focusItem);
+			if (focusIndex < itemCount - 1) {
+				focusItem.redraw ();
+				focusItem = items [focusIndex + 1];
+				focusItem.redraw ();
+			}
+			break;
+		}
+	}
+}
+//end of method
+//photon org.eclipse.swt.widgets.ExpandBar
+void onMouseUp (Event event) {
+	int x = event.x;
+	int y = event.y;
+	if (focusItem == null) return;
+	boolean hover = focusItem.x <= x && x < (focusItem.x + focusItem.width) && focusItem.y <= y && y < (focusItem.y + getBandHeight ()); 
+	if (hover) {
+		Event ev = new Event ();
+		ev.item = focusItem;
+		notifyListeners (focusItem.expanded ? SWT.Collapse : SWT.Expand, ev);
+		focusItem.expanded = !focusItem.expanded;
+		showItem (focusItem);
+	}
+}
+//end of method
+//gtk org.eclipse.swt.widgets.ExpandBar
+int gtk_button_release_event (int widget, int event) {
+	if (OS.GTK_VERSION < OS.VERSION (2, 4, 0)) {
+		if (lastFocus != null) {
+			GdkEventButton gdkEvent = new GdkEventButton ();
+			OS.memmove (gdkEvent, event, GdkEventButton.sizeof);
+			int x = (int)gdkEvent.x;
+			int y = (int)gdkEvent.y;
+			boolean hover = lastFocus.x <= x && x < (lastFocus.x + lastFocus.width) && lastFocus.y <= y && y < (lastFocus.y + getBandHeight ()); 
+			if (hover) {
+				Event ev = new Event ();
+				ev.item = lastFocus;
+				notifyListeners (lastFocus.expanded ? SWT.Collapse : SWT.Expand, ev);
+				lastFocus.expanded = !lastFocus.expanded;
+				showItem (lastFocus);
+			}
+		}
+	}
+	return super.gtk_button_release_event (widget, event);
+}
+//end of method
+//gtk org.eclipse.swt.widgets.ExpandBar
+int gtk_key_press_event (int widget, int event) {
+	if (OS.GTK_VERSION >= OS.VERSION (2, 4, 0)) {
+		if (!hasFocus ()) return 0;
+		int /*long*/ result = super.gtk_key_press_event (widget, event);
+		if (result != 0) return result;
+		int index = 0;
+		while (index < itemCount) {
+			if (items [index].hasFocus ()) break;
+			index++;
+		}
+		GdkEventKey gdkEvent = new GdkEventKey ();
+		OS.memmove (gdkEvent, event, GdkEventKey.sizeof);
+		boolean next = false;
+		switch (gdkEvent.keyval) {
+			case OS.GDK_Up:
+			case OS.GDK_Left: next = false; break;
+			case OS.GDK_Down: 
+			case OS.GDK_Right: next = true; break;
+			default: return result;
+		}
+		int start = index, offset = next ? 1 : -1;
+		while ((index = (index + offset + itemCount) % itemCount) != start) {
+			ExpandItem item = items [index];
+			if (item.setFocus ()) return result;
+		}
+		return result;
+	} else {
+		if (lastFocus != null) {
+			GdkEventKey keyEvent = new GdkEventKey ();
+			OS.memmove (keyEvent, event, GdkEventKey.sizeof);
+			switch (keyEvent.keyval) {
+				case OS.GDK_Return:
+				case OS.GDK_space:
+					Event ev = new Event ();
+					ev.item = lastFocus;
+					sendEvent (lastFocus.expanded ? SWT.Collapse :SWT.Expand, ev);
+					lastFocus.expanded = !lastFocus.expanded;
+					showItem (lastFocus);
+					break;
+				case OS.GDK_Up:
+				case OS.GDK_KP_Up: {
+					int focusIndex = indexOf (lastFocus);
+					if (focusIndex > 0) {
+						lastFocus.redraw ();
+						lastFocus = items [focusIndex - 1];
+						lastFocus.redraw ();
+					}
+					break;
+				}
+				case OS.GDK_Down:
+				case OS.GDK_KP_Down: {
+					int focusIndex = indexOf (lastFocus);
+					if (focusIndex < itemCount - 1) {
+						lastFocus.redraw ();
+						lastFocus = items [focusIndex + 1];
+						lastFocus.redraw ();
+					}
+					break;
+				}
+			}
+		}
+	}
+	return super.gtk_key_press_event (widget, event);
+}
+//end of method

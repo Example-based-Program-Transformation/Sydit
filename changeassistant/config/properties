@@ -1,0 +1,9 @@
+Temp_File_Path = /Users/nm8247/experiment/temp/
+Output_Path = /Users/nm8247/experiment/data/
+Object_Output_Path = /Users/nm8247/experiment/object_output/
+Graph_Path = /Users/nm8247/experiment/visualized_graph/graph.xml
+Pattern_Path = /Users/nm8247/experiment/visualized_graph/pattern.xml
+
+SVN_URL = svn://localhost
+SVN_Branch = trunk
+SVN_Output_URL = /Users/mn8247/Software/swt

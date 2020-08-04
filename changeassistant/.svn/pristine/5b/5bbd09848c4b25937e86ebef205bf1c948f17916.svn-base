@@ -1,0 +1,7 @@
+
+//end of method
+public IWorkbenchPart getWorkbenchPart() {
+		if (fContainer != null)
+			return fContainer.getWorkbenchPart();
+		return null;
+	}

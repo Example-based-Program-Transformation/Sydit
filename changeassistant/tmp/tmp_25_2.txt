@@ -1,0 +1,15 @@
+public boolean isMigrationCandidate(ILaunchConfiguration candidate) throws CoreException {
+  initializeMigrationDelegate();
+  if (fMigrationDelegate != null) {
+    fMigrationDelegate.isCandidate(candidate);
+  }
+  return false;
+}
+//end of method
+public boolean isMigrationCandidate(ILaunchConfiguration candidate) throws CoreException {
+		initializeMigrationDelegate();
+		if(fMigrationDelegate != null) {
+			return fMigrationDelegate.isCandidate(candidate);
+		}
+		return false;
+	}

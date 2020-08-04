@@ -1,0 +1,138 @@
+//motif org.eclipse.swt.dnd.DragSource
+public void addDragListener(DragSourceListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragStart, typedListener);
+	addListener (DND.DragSetData, typedListener);
+	addListener (DND.DragEnd, typedListener);
+}
+//end of method
+//motif org.eclipse.swt.dnd.DropTarget
+public void addDropListener(DropTargetListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragEnter, typedListener);
+	addListener (DND.DragLeave, typedListener);
+	addListener (DND.DragOver, typedListener);
+	addListener (DND.DragOperationChanged, typedListener);
+	addListener (DND.Drop, typedListener);
+	addListener (DND.DropAccept, typedListener);
+}
+//end of method
+//gtk org.eclipse.swt.dnd.DragSource
+public void addDragListener(DragSourceListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragStart, typedListener);
+	addListener (DND.DragSetData, typedListener);
+	addListener (DND.DragEnd, typedListener);
+}
+//end of method
+//gtk org.eclipse.swt.dnd.DropTarget
+public void addDropListener(DropTargetListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragEnter, typedListener);
+	addListener (DND.DragLeave, typedListener);
+	addListener (DND.DragOver, typedListener);
+	addListener (DND.DragOperationChanged, typedListener);
+	addListener (DND.Drop, typedListener);
+	addListener (DND.DropAccept, typedListener);	
+}
+//end of method
+//win32 org.eclipse.swt.dnd.DragSource
+public void addDragListener(DragSourceListener listener) {
+	if (listener == null) DND.error(SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener(listener);
+	typedListener.dndWidget = this;
+	addListener(DND.DragStart, typedListener);
+	addListener(DND.DragSetData, typedListener);
+	addListener(DND.DragEnd, typedListener);
+}
+//end of method
+//win32 org.eclipse.swt.dnd.DropTarget
+public void addDropListener(DropTargetListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragEnter, typedListener);
+	addListener (DND.DragLeave, typedListener);
+	addListener (DND.DragOver, typedListener);
+	addListener (DND.DragOperationChanged, typedListener);
+	addListener (DND.Drop, typedListener);
+	addListener (DND.DropAccept, typedListener);
+}
+//end of method
+//carbon org.eclipse.swt.dnd.DragSource
+public void addDragListener(DragSourceListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragStart, typedListener);
+	addListener (DND.DragSetData, typedListener);
+	addListener (DND.DragEnd, typedListener);
+}
+//end of method
+//carbon org.eclipse.swt.dnd.DropTarget
+public void addDropListener(DropTargetListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragEnter, typedListener);
+	addListener (DND.DragLeave, typedListener);
+	addListener (DND.DragOver, typedListener);
+	addListener (DND.DragOperationChanged, typedListener);
+	addListener (DND.Drop, typedListener);
+	addListener (DND.DropAccept, typedListener);
+}
+//end of method
+//photon org.eclipse.swt.dnd.DragSource
+public void addDragListener(DragSourceListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragStart, typedListener);
+	addListener (DND.DragSetData, typedListener);
+	addListener (DND.DragEnd, typedListener);
+}
+//end of method
+//photon org.eclipse.swt.dnd.DropTarget
+public void addDropListener(DropTargetListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragEnter, typedListener);
+	addListener (DND.DragLeave, typedListener);
+	addListener (DND.DragOver, typedListener);
+	addListener (DND.DragOperationChanged, typedListener);
+	addListener (DND.Drop, typedListener);
+	addListener (DND.DropAccept, typedListener);
+}
+//end of method
+//emulated org.eclipse.swt.dnd.DragSource
+public void addDragListener(DragSourceListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragStart, typedListener);
+	addListener (DND.DragSetData, typedListener);
+	addListener (DND.DragEnd, typedListener);
+}
+//end of method
+//emulated org.eclipse.swt.dnd.DropTarget
+public void addDropListener(DropTargetListener listener) {
+	if (listener == null) DND.error (SWT.ERROR_NULL_ARGUMENT);
+	DNDListener typedListener = new DNDListener (listener);
+	typedListener.dndWidget = this;
+	addListener (DND.DragEnter, typedListener);
+	addListener (DND.DragLeave, typedListener);
+	addListener (DND.DragOver, typedListener);
+	addListener (DND.DragOperationChanged, typedListener);
+	addListener (DND.Drop, typedListener);
+	addListener (DND.DropAccept, typedListener);
+}
+//end of method

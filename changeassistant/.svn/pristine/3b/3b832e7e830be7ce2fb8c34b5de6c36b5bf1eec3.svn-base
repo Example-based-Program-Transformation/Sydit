@@ -1,0 +1,838 @@
+package changeassistant.crystal.analysis.def;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+
+import changeassistant.crystal.analysis.ElementResult;
+import changeassistant.internal.ASTNodeIncludedCollector;
+import changeassistant.peers.SourceCodeRange;
+import changeassistant.peers.comparison.Node;
+import edu.cmu.cs.crystal.cfg.eclipse.EclipseCFG;
+import edu.cmu.cs.crystal.simple.TupleLatticeElement;
+import edu.cmu.cs.crystal.tac.TACFlowAnalysis;
+import edu.cmu.cs.crystal.tac.eclipse.CompilationUnitTACs;
+import edu.cmu.cs.crystal.tac.eclipse.EclipseTAC;
+import edu.cmu.cs.crystal.tac.model.TACInstruction;
+import edu.cmu.cs.crystal.tac.model.Variable;
+import edu.cmu.cs.crystal.util.Utilities;
+
+/**
+ * This class does not only contain analysis result of DefUseAnalysis, but also
+ * the MethodDeclaration used to get the analysis result
+ * 
+ * @author ibm
+ * 
+ */
+public class DefUseElementResult extends ElementResult {
+
+	public static boolean UPSTREAM_DATA_DEPENDENCE = true;
+
+	public static boolean DOWNSTREAM_DATA_DEPENDENCE = false;
+
+	public static boolean UPSTREAM_DEF_DEF = false;
+
+	public static boolean DOWNSTREAM_DEF_DEF = false;
+
+	public static int DEF_USE_ITERATION = 1;
+
+	public static int DEF_DEF_ITERATION = 1;
+
+	private ASTNodeIncludedCollector collector;
+	private MethodDeclaration d;
+	private TACFlowAnalysis<TupleLatticeElement<Variable, DefUseLE>> analysis;
+	private CompilationUnitTACs cTac;
+	private List<ASTNode> astNodes;
+	private List<SourceCodeRange> astNodeRanges;
+	// private Map<ASTNode, EclipseCFGNode> map;
+
+	private List<Variable> vars;
+	private List<List<DefUse>> defuseLists;
+	private List<Set<SourceCodeRange>> defRangesList;
+
+	// private Map<ASTNode, Node> astNodeMap;
+	// private Map<EclipseCFGNode, TupleLatticeElement<Variable, DefUseLE>>
+	// resultBeforeMap;
+	// private Map<EclipseCFGNode, TupleLatticeElement<Variable, DefUseLE>>
+	// resultAfterMap;
+
+	private Map<Node, WeakReference<Map<Variable, Set<SourceCodeRange>>>> defFactCache;
+	private Map<Node, WeakReference<Map<Variable, Set<SourceCodeRange>>>> useFactCache;
+
+	private EclipseTAC tac;
+
+	public Set<Node> fUpstreamSeeds = new HashSet<Node>();
+	public Set<Node> fDownstreamSeeds = new HashSet<Node>();
+
+	public Set<Node> fUpstreamSeeds2 = new HashSet<Node>();// the upstream nodes
+															// whose defs are
+															// killed by current
+															// def
+	public Set<Node> fDownstreamSeeds2 = new HashSet<Node>();// the downstream
+																// nodes whose
+																// defs kill the
+																// current def
+
+	public DefUseElementResult(MethodDeclaration d,
+			TACFlowAnalysis<TupleLatticeElement<Variable, DefUseLE>> analysis,
+			CompilationUnitTACs tac) {
+		this.d = d;
+		this.analysis = analysis;
+		this.analysis.getEndResults(d);
+		this.cTac = tac;
+		this.tac = tac.getMethodTAC(d);
+		// this.map = new EclipseCFG(d).getNodeMap();
+		this.astNodes = new ArrayList<ASTNode>();
+		this.astNodes.addAll(new EclipseCFG(d).getNodeMap().keySet());
+		ASTNode astNode = null;
+		this.astNodeRanges = new ArrayList<SourceCodeRange>();
+		for (int i = 0; i < astNodes.size(); i++) {
+			astNode = astNodes.get(i);
+			this.astNodeRanges.add(new SourceCodeRange(astNode
+					.getStartPosition(), astNode.getLength()));
+		}
+		this.collector = new ASTNodeIncludedCollector(d);
+		this.defFactCache = new HashMap<Node, WeakReference<Map<Variable, Set<SourceCodeRange>>>>();
+		this.useFactCache = new HashMap<Node, WeakReference<Map<Variable, Set<SourceCodeRange>>>>();
+		setDefUses();
+	}
+
+	private ASTNode findElement(SourceCodeRange scr) {
+		assert astNodeRanges.indexOf(scr) != -1;
+		return astNodes.get(astNodeRanges.indexOf(scr));
+	}
+
+	/**
+	 * For a given def, find all uses
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private Set<SourceCodeRange> getDownstreamDataDependence(Node node) {
+		Set<SourceCodeRange> resultSet = new HashSet<SourceCodeRange>();
+		Variable v = null;
+		Set<SourceCodeRange> knownDefs = null;
+		// 1. get all defs in the node
+		Map<Variable, Set<SourceCodeRange>> defFact = getDefFact(node);
+		for (Entry<Variable, Set<SourceCodeRange>> entry : defFact.entrySet()) {
+			// 2. for each defined var, find all its defs
+			v = entry.getKey();
+			knownDefs = entry.getValue();
+			for (DefUse du : defuseLists.get(vars.indexOf(v))) {
+				// 3. only focus on the defs concerned
+				if (knownDefs.contains(du.getDef())) {
+					resultSet.addAll(du.getUses());
+				}
+			}
+		}
+		resultSet = filter(resultSet);
+		return resultSet;
+	}
+
+	private List<SourceCodeRange> getRangesIncluded(Node seed) {
+		List<SourceCodeRange> ranges = new ArrayList<SourceCodeRange>();
+		List<SourceCodeRange> astExpressions = seed.getASTExpressions();
+		for (SourceCodeRange astExpr : astExpressions) {
+			for (ASTNode astNode : collector.collectASTNodesWithin(astExpr)) {
+				astNodes.add(astNode);
+				ranges.add(new SourceCodeRange(astNode.getStartPosition(),
+						astNode.getLength()));
+			}
+		}
+		return ranges;
+	}
+
+	/**
+	 * for a given use, find its upstream defs
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private Set<SourceCodeRange> getUpstreamDataDependence(Node node) {
+		Map<Variable, Set<SourceCodeRange>> map = getUseFact(node);
+		Set<SourceCodeRange> resultSet = new HashSet<SourceCodeRange>();
+		for (Set<SourceCodeRange> scrs : map.values()) {
+			resultSet.addAll(scrs);
+		}
+		// to filter all result source code ranges included in node
+		resultSet = filter(resultSet);
+		return resultSet;
+	}
+
+	/**
+	 * To find nodes killing the defs in the node
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private Set<SourceCodeRange> getDownstreamDef(Node node) {
+		Set<SourceCodeRange> resultSet = new HashSet<SourceCodeRange>();
+		// 1. get all variables defined in this node
+		Map<Variable, Set<SourceCodeRange>> knownDefs = getDefFact(node);
+		if (knownDefs.isEmpty())
+			return resultSet;// this is not a def
+		Set<SourceCodeRange> tmpRanges = null;
+		Set<SourceCodeRange> defRanges = null;
+		Set<SourceCodeRange> beforeDefs = null;
+		TupleLatticeElement<Variable, DefUseLE> beforeValue = null;
+		ASTNode astNode = null;
+		Variable v = null;
+
+		for (Entry<Variable, Set<SourceCodeRange>> entry : knownDefs.entrySet()) {
+			v = entry.getKey();
+			// 2. find all nodes defining the concerned vars
+			defRanges = entry.getValue();
+			tmpRanges = DefUse.getDefs(defuseLists.get(vars.indexOf(v)));
+			for (SourceCodeRange tmpRange : tmpRanges) {
+				astNode = astNodes.get(astNodeRanges.indexOf(tmpRange));
+				// 3. if some concerned def(s) flow to a certain def D, D should
+				// be included
+				beforeValue = this.getValueBeforeASTNode(astNode);
+				beforeDefs = new HashSet<SourceCodeRange>(
+						beforeValue.get(v).defs);
+				beforeDefs.retainAll(defRanges);
+				if (!beforeDefs.isEmpty()) {
+					resultSet.add(tmpRange);
+				}
+			}
+		}
+		resultSet = filter(resultSet);
+		return resultSet;
+	}
+
+	/**
+	 * To get all defs killed by the known node For a given def, find upstream
+	 * def(s)
+	 * 
+	 * @param node
+	 * @return
+	 */
+	private Set<SourceCodeRange> getUpstreamDef(Node node) {
+		Set<SourceCodeRange> resultSet = new HashSet<SourceCodeRange>();
+		// 1. find all vars defined in the current node
+		Map<Variable, Set<SourceCodeRange>> defFact = getDefFact(node);
+		Variable v = null;
+		Set<SourceCodeRange> knownDefs = null, tempDefs = null;
+		TupleLatticeElement<Variable, DefUseLE> beforeValue;
+		// 2. check each v to see whether its current def kills any previous def
+		for (Entry<Variable, Set<SourceCodeRange>> entry : defFact.entrySet()) {
+			v = entry.getKey();
+			knownDefs = entry.getValue();
+			for (SourceCodeRange def : knownDefs) {
+				beforeValue = this.getValueBeforeASTNode(astNodes
+						.get(astNodeRanges.indexOf(def)));
+				if (beforeValue == null)
+					continue;
+				tempDefs = beforeValue.get(v).defs;
+				// 3. if so, add these defs into the resultSet
+				if (!tempDefs.isEmpty())
+					resultSet.addAll(tempDefs);
+			}
+		}
+		resultSet = filter(resultSet);
+		return resultSet;
+	}
+
+	public List<ASTNode> getASTNodes() {
+		return astNodes;
+	}
+
+	public List<SourceCodeRange> getASTNodeRanges() {
+		return astNodeRanges;
+	}
+
+	public TACFlowAnalysis<TupleLatticeElement<Variable, DefUseLE>> getAnalysis() {
+		return analysis;
+	}
+
+	/**
+	 * to get down def for current def/use
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public Set<SourceCodeRange> getDownDef2(Node node) {
+		Set<SourceCodeRange> resultSet = getDownstreamDef(node);
+		// 1. get all defs used by current node
+		Map<Variable, Set<SourceCodeRange>> useFact = getUseFact(node);
+		Variable var = null;
+		Set<SourceCodeRange> knownDefs = null, tmpDefs = null, tmpDefs2 = null;
+		TupleLatticeElement<Variable, DefUseLE> beforeValue = null;
+		ASTNode tmpASTNode = null;
+		for (Entry<Variable, Set<SourceCodeRange>> entry : useFact.entrySet()) {
+			// 2. for each used def, find all defs killing it, regarding it as
+			// an approximation of downstream defs
+			var = entry.getKey();
+			knownDefs = entry.getValue();
+			tmpDefs = DefUse.getDefs(defuseLists.get(vars.indexOf(var)));
+			for (SourceCodeRange tmpDef : tmpDefs) {
+				tmpASTNode = astNodes.get(astNodeRanges.indexOf(tmpDef));
+				beforeValue = this.getValueBeforeASTNode(tmpASTNode);
+				// 3. the concerned defs is killed by the new def
+				tmpDefs2 = new HashSet<SourceCodeRange>(
+						beforeValue.get(var).defs);
+				tmpDefs2.retainAll(knownDefs);
+				if (!tmpDefs2.isEmpty()) {
+					resultSet.add(tmpDef);
+				}
+			}
+		}
+		resultSet = filter(resultSet);
+		return resultSet;
+	}
+
+	/**
+	 * find down use for a given def/use
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public Set<SourceCodeRange> getDownUse2(Node node) {
+		Set<SourceCodeRange> resultSet = getDownstreamDataDependence(node);// this
+																			// is
+																			// only
+																			// for
+																			// current
+																			// def
+		Map<Variable, Set<SourceCodeRange>> useFact = getUseFact(node);
+		Variable var = null;
+		List<DefUse> duList = null;
+		Set<SourceCodeRange> knownDefs = null;
+		List<SourceCodeRange> tmpUses = null;
+		List<SourceCodeRange> uses = null;
+		// 1. get all ranges using some defs
+		for (Entry<Variable, Set<SourceCodeRange>> entry : useFact.entrySet()) {
+			// 2. for each using range, find all uses coming after it
+			var = entry.getKey();
+			knownDefs = entry.getValue();
+			duList = defuseLists.get(vars.indexOf(var));
+			for (DefUse du : duList) {
+				if (knownDefs.contains(du.def)) {
+					uses = du.getUses();
+					tmpUses = new ArrayList<SourceCodeRange>(uses);
+					tmpUses.removeAll(knownDefs);
+					for (int i = 1; i <= tmpUses.size(); i++) {
+						if (tmpUses.get(tmpUses.size() - i).equals(
+								uses.get(uses.size() - i))) {
+							resultSet.add(tmpUses.get(tmpUses.size() - i));
+						} else {// end comparison once meet with the first
+								// differnt range pair
+							break;
+						}
+					}
+				}
+			}
+		}
+		return resultSet;
+	}
+
+	/**
+	 * To get def for current use/def
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public Set<SourceCodeRange> getUpDef2(Node node) {
+		Set<SourceCodeRange> resultSet = getUpstreamDef(node);
+		resultSet.addAll(getUpstreamDataDependence(node));
+		return resultSet;
+	}
+
+	/**
+	 * To get use before current use, the result should be ordered
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public List<SourceCodeRange> getUpUse2(Node node) {
+		Set<SourceCodeRange> resultSet = new HashSet<SourceCodeRange>();
+		Map<Variable, Set<SourceCodeRange>> useFact = getUseFact(node);
+		List<SourceCodeRange> tmpRanges = null, useRanges = null;
+		Variable var = null;
+		Set<SourceCodeRange> knownDefs = null;
+		SourceCodeRange r1 = null;
+		List<DefUse> duList = null;
+		for (Entry<Variable, Set<SourceCodeRange>> entry : useFact.entrySet()) {
+			// 1. for each var used in the node
+			var = entry.getKey();
+			// 2. find the defs it is using
+			knownDefs = entry.getValue();
+			duList = defuseLists.get(vars.indexOf(var));
+			// 3. for each used def, check all uses before the earliest current
+			// use for that def
+			for (DefUse du : duList) {
+				if (knownDefs.contains(du.getDef())) {
+					useRanges = du.getUses();
+					tmpRanges = new ArrayList<SourceCodeRange>(useRanges);
+					for (int i = 0; i < tmpRanges.size(); i++) {
+						r1 = tmpRanges.get(i);
+						if (r1.equals(useRanges.get(i))) {
+							resultSet.add(r1);
+						} else {// end comparison once find the first different
+								// range pair
+							break;
+						}
+					}
+				}
+			}
+		}
+		List<SourceCodeRange> orderedResults = new ArrayList<SourceCodeRange>(
+				resultSet);
+		Collections.sort(orderedResults);
+		return orderedResults;
+	}
+
+	public Set<Node> getNodeDataDependence(Node node) {
+		this.fUpstreamSeeds.clear();
+		this.fDownstreamSeeds.clear();
+		this.fUpstreamSeeds2.clear();
+		this.fDownstreamSeeds2.clear();
+
+		Set<Node> resultSet = new HashSet<Node>();
+		Set<Node> upstreamSeeds = new HashSet<Node>();
+		Set<Node> downstreamSeeds = new HashSet<Node>();
+
+		upstreamSeeds.add(node);
+		downstreamSeeds.add(node);
+		System.out.print("");
+		Set<Node> tempSet = new HashSet<Node>();
+		Set<Node> tempUpstreamResult = new HashSet<Node>();
+		Set<Node> tempDownstreamResult = new HashSet<Node>();
+		for (int i = 0; i < DEF_USE_ITERATION; i++) {
+			if (UPSTREAM_DATA_DEPENDENCE) {
+				tempUpstreamResult.clear();
+				for (Node seed : upstreamSeeds) {
+					tempSet = searchForRelevantNodes(new ArrayList<SourceCodeRange>(
+							getUpstreamDataDependence(seed)));
+					tempUpstreamResult.addAll(tempSet);
+					resultSet.addAll(tempSet);
+				}
+				tempUpstreamResult.removeAll(fUpstreamSeeds);
+				upstreamSeeds.clear();
+				upstreamSeeds.addAll(tempUpstreamResult);
+				fUpstreamSeeds.addAll(tempUpstreamResult);
+			}
+			if (DOWNSTREAM_DATA_DEPENDENCE) {
+				tempDownstreamResult.clear();
+				for (Node seed : downstreamSeeds) {
+					tempSet = searchForRelevantNodes(new ArrayList<SourceCodeRange>(
+							getDownstreamDataDependence(seed)));
+					tempDownstreamResult.addAll(tempSet);
+					resultSet.addAll(tempSet);
+				}
+				tempDownstreamResult.removeAll(fDownstreamSeeds);
+				downstreamSeeds.clear();
+				downstreamSeeds.addAll(tempDownstreamResult);
+				fDownstreamSeeds.addAll(tempDownstreamResult);
+			}
+		}
+
+		// fUpstreamSeeds.addAll(upstreamSeeds);
+		upstreamSeeds.clear();
+		upstreamSeeds.add(node);
+
+		// fDownstreamSeeds.addAll(downstreamSeeds);
+		downstreamSeeds.clear();
+		downstreamSeeds.add(node);
+		for (int i = 0; i < DEF_DEF_ITERATION; i++) {
+			if (UPSTREAM_DEF_DEF) {
+				tempUpstreamResult.clear();
+				for (Node seed : upstreamSeeds) {
+					tempSet = searchForRelevantNodes(new ArrayList<SourceCodeRange>(
+							getUpstreamDef(seed)));
+					tempUpstreamResult.addAll(tempSet);
+					resultSet.addAll(tempSet);
+				}
+				// to remove the nodes which have already served as seeds to
+				// avoid repetitive analysis
+				tempUpstreamResult.removeAll(fUpstreamSeeds2);
+				upstreamSeeds.clear();
+				upstreamSeeds.addAll(tempUpstreamResult);
+				fUpstreamSeeds2.addAll(upstreamSeeds);
+			}
+			if (DOWNSTREAM_DEF_DEF) {
+				tempDownstreamResult.clear();
+				for (Node seed : downstreamSeeds) {
+					tempSet = searchForRelevantNodes(new ArrayList<SourceCodeRange>(
+							getDownstreamDef(seed)));
+					tempDownstreamResult.addAll(tempSet);
+					resultSet.addAll(tempSet);
+				}
+				// to remove the nodes which have already served as seeds to
+				// avoid repetitive analysis
+				tempDownstreamResult.removeAll(fDownstreamSeeds2);
+				downstreamSeeds.clear();
+				downstreamSeeds.addAll(tempDownstreamResult);
+				fDownstreamSeeds2.addAll(downstreamSeeds);
+			}
+		}
+
+		fUpstreamSeeds.remove(node);
+		fDownstreamSeeds.remove(node);
+		fUpstreamSeeds2.remove(node);
+		fDownstreamSeeds2.remove(node);
+		resultSet.remove(node);
+		return resultSet;
+	}
+
+	public Set<Node> getTransitiveDataDependence(Node node) {
+		Set<Node> result = new HashSet<Node>();
+		Set<Node> tmpSet = null;
+		Set<Node> upstreamRs = new HashSet<Node>();
+		// Set<Node> downstreamRs = new HashSet<Node>();
+		Set<Node> upstreamSeeds = new HashSet<Node>();
+		// Set<Node> downstreamSeeds = new HashSet<Node>();
+
+		upstreamSeeds.add(node);
+		// downstreamSeeds.add(node);
+
+		while (!upstreamSeeds.isEmpty()) {
+			tmpSet = new HashSet<Node>();
+			for (Node tmpNode : upstreamSeeds) {
+				tmpSet = searchForRelevantNodes(new ArrayList<SourceCodeRange>(
+						getUpstreamDataDependence(tmpNode)));
+			}
+			upstreamRs.addAll(upstreamSeeds);
+			tmpSet.removeAll(upstreamRs);
+			upstreamSeeds = tmpSet;
+		}
+
+		// while (!downstreamSeeds.isEmpty()) {
+		// tmpSet = new HashSet<Node>();
+		// for (Node tmpNode : downstreamSeeds) {
+		// tmpSet.addAll(searchForRelevantNodes(new ArrayList<SourceCodeRange>(
+		// getDownstreamDataDependence(tmpNode))));
+		// }
+		// downstreamRs.addAll(downstreamSeeds);
+		// tmpSet.removeAll(downstreamRs);
+		// downstreamSeeds = tmpSet;
+		// }
+		result.addAll(upstreamRs);
+		// result.addAll(downstreamRs);
+		return result;
+	}
+
+	public MethodDeclaration getMethodDeclaration() {
+		return this.d;
+	}
+
+	private Set<SourceCodeRange> filter(Set<SourceCodeRange> resultSet) {
+		// filter out the expressions within the current node
+		ASTNode element;
+		Set<SourceCodeRange> filteredResultSet = new HashSet<SourceCodeRange>();
+		for (SourceCodeRange result : resultSet) {
+			element = findElement(result);
+			if (element != null) {
+				switch (element.getNodeType()) {
+				case ASTNode.BOOLEAN_LITERAL:
+				case ASTNode.CHARACTER_LITERAL:
+				case ASTNode.NULL_LITERAL:
+				case ASTNode.NUMBER_LITERAL:
+				case ASTNode.STRING_LITERAL:
+				case ASTNode.TYPE_LITERAL:
+					break; // do nothing
+				default:
+					filteredResultSet.add(result);
+					break;
+				}
+			}
+		}
+		resultSet = filteredResultSet;
+		return resultSet;
+	}
+
+	/**
+	 * find all defs in the given astExpressions it is possible that a variable
+	 * is defined multiple times
+	 * 
+	 * @param astExpressions
+	 * @return
+	 */
+	private Map<Variable, Set<SourceCodeRange>> getDefFact(Node seed) {
+		if (defFactCache.containsKey(seed)) {
+			Map<Variable, Set<SourceCodeRange>> tmpMap = defFactCache.get(seed)
+					.get();
+			if (tmpMap != null)
+				return tmpMap;
+		}
+		List<SourceCodeRange> ranges = getRangesIncluded(seed);
+		Map<Variable, Set<SourceCodeRange>> result = new HashMap<Variable, Set<SourceCodeRange>>();
+		Set<SourceCodeRange> defRanges = null;
+		Variable v = null;
+
+		for (int i = 0; i < defRangesList.size(); i++) {
+			defRanges = new HashSet<SourceCodeRange>(defRangesList.get(i));
+			defRanges.retainAll(ranges);
+			if (!defRanges.isEmpty()) {
+				v = vars.get(i);
+				if (result.get(v) == null) {
+					result.put(v, defRanges);
+				} else {
+					result.get(v).addAll(defRanges);
+				}
+			}
+		}
+		defFactCache.put(seed, new WeakReference(result));
+		return result;
+	}
+
+	/**
+	 * Find all defs used by current node
+	 * 
+	 * @param seed
+	 * @return
+	 */
+	private Map<Variable, Set<SourceCodeRange>> getUseFact(Node seed) {
+		Map<Variable, Set<SourceCodeRange>> result = null;
+		TupleLatticeElement<Variable, DefUseLE> value = null;
+
+		if (useFactCache.containsKey(seed)) {
+			result = useFactCache.get(seed).get();
+			if (result != null)
+				return result;
+		}
+		// 1. find all ranges included
+		List<SourceCodeRange> ranges = getRangesIncluded(seed);
+		result = new HashMap<Variable, Set<SourceCodeRange>>();
+		Set<SourceCodeRange> useRanges = null;
+		ASTNode astNode = null;
+		// 2. find all uses of each range
+		for (int i = 0; i < ranges.size(); i++) {
+			if (!astNodeRanges.contains(ranges.get(i)))
+				continue;
+			astNode = astNodes.get(astNodeRanges.indexOf(ranges.get(i)));
+			value = this.getValueAfterASTNode(astNode);
+			if (value == null)
+				continue;
+			for (Variable var : value.getKeySet()) {
+				useRanges = new HashSet<SourceCodeRange>(value.get(var).uses);
+				// 3. remove the ranges defined by current node
+				useRanges.removeAll(ranges);
+				if (result.containsKey(var)) {
+					result.get(var).addAll(useRanges);
+				} else {
+					result.put(var, useRanges);
+				}
+			}
+		}
+		useFactCache.put(seed, new WeakReference(result));
+		return result;
+	}
+
+	// /**
+	// * To get all variables defined in this ASTNode
+	// * @param element
+	// * @return
+	// */
+	// private Set<Variable> checkDef(ASTNode element){
+	// SourceCodeRange scr = new SourceCodeRange(element.getStartPosition(),
+	// element.getLength());
+	// Set<Variable> vars = new HashSet<Variable>();
+	// TupleLatticeElement<Variable, DefUseLE> value =
+	// this.getValueAfterASTNode(element);
+	// if(value == null) return vars;
+	// for(Variable var : value.getKeySet()){
+	// if(value.get(var).containDef(scr))
+	// vars.add(var);
+	// }
+	// return vars;
+	// }
+
+	// /**
+	// * To check whether any of the knownDefs can reach the astNode.
+	// * @param astNode
+	// * @param knownDefs
+	// * @return
+	// */
+	// private Map<Variable, Set<SourceCodeRange>> checkReach(ASTNode astNode,
+	// Map<Variable, Set<SourceCodeRange>>knownDefs){
+	// //1. get the value before the given astNode
+	// TupleLatticeElement<Variable, DefUseLE> value =
+	// getValueBeforeASTNode(astNode);
+	// Map<Variable, Set<SourceCodeRange>> result = new HashMap<Variable,
+	// Set<SourceCodeRange>>();
+	// if(value == null)
+	// return result;
+	// Set<Variable> vars = new HashSet<Variable>(value.getKeySet());
+	// DefUseLE le;
+	// Set<SourceCodeRange> tempRanges;
+	// //2. filter out all irrelevant variables, only keeping the relevant
+	// variables
+	// vars.retainAll(knownDefs.keySet());
+	// //3. if there are still some relevant variables left, see whether they
+	// are defined by knownDefs
+	// if(!vars.isEmpty()){
+	// for(Variable var : vars){
+	// le = value.get(var);
+	// tempRanges = new HashSet<SourceCodeRange>(le.defs);
+	// tempRanges.retainAll(knownDefs.get(var));
+	// if(!tempRanges.isEmpty()){
+	// result.put(var, tempRanges);
+	// }
+	// }
+	// }
+	// return result;
+	// }
+
+	private TACInstruction getInstr(ASTNode element) {
+		TACInstruction instr = null;
+		try {
+			instr = tac.instruction(element);
+		} catch (Exception e) {
+			MethodDeclaration innerMd = Utilities.getMethodDeclaration(element);
+			EclipseTAC tempTac = cTac.getMethodTAC(innerMd);
+			instr = tempTac.instruction(element);
+		}
+		return instr;
+	}
+
+	/**
+	 * If the ASTNode does not correspond to an instruction, do not see its
+	 * relevant result
+	 */
+	public TupleLatticeElement<Variable, DefUseLE> getValueAfterASTNode(
+			ASTNode element) {
+		TACInstruction instr = getInstr(element);
+		if (instr != null)
+			return analysis.getResultsAfter(instr);
+		return null;
+	}
+
+	public TupleLatticeElement<Variable, DefUseLE> getValueBeforeASTNode(
+			ASTNode element) {
+		TACInstruction instr = getInstr(element);
+		if (instr != null)
+			return analysis.getResultsBefore(instr);
+		return null;
+	}
+
+	private void setDefUses() {
+		this.defuseLists = new ArrayList<List<DefUse>>();
+		this.vars = new ArrayList<Variable>();
+		TupleLatticeElement<Variable, DefUseLE> value = null;
+		SourceCodeRange curScr = null;
+		Set<SourceCodeRange> tmpUses = null;
+		List<SourceCodeRange> uses = null;
+		DefUse tmpDefUse;
+		List<DefUse> defUses = null;
+		for (ASTNode astNode : astNodes) {
+			value = this.getValueAfterASTNode(astNode);
+			curScr = new SourceCodeRange(astNode.getStartPosition(),
+					astNode.getLength());
+			if (value != null) {
+				// 3. for each astNode, check whether it defines a variable
+				for (Variable v : value.getKeySet()) {
+					tmpUses = value.get(v).uses;
+					if (!tmpUses.isEmpty()) {
+						if (!vars.contains(v)) {
+							vars.add(v);
+							defUses = new ArrayList<DefUse>();
+							defuseLists.add(defUses);
+						} else {
+							defUses = defuseLists.get(vars.indexOf(v));
+						}
+						for (SourceCodeRange tmpDef : tmpUses) {
+							tmpDefUse = DefUse.getDefUse(defUses, tmpDef);
+							if (tmpDefUse == null) {
+								uses = new ArrayList<SourceCodeRange>();
+								uses.add(curScr);
+								tmpDefUse = new DefUse(tmpDef, uses);
+								defUses.add(tmpDefUse);
+							} else {
+								tmpDefUse.addUse(curScr);
+							}
+						}
+					}
+				}
+			}
+		}
+		DefUse.sort(defuseLists);
+		defRangesList = new ArrayList<Set<SourceCodeRange>>();
+		for (int i = 0; i < vars.size(); i++) {
+			defRangesList.add(DefUse.getDefs(defuseLists.get(i)));
+		}
+	}
+}
+
+class DefUse implements Comparable {
+	SourceCodeRange def;
+	List<SourceCodeRange> uses;
+
+	public DefUse(SourceCodeRange def, List<SourceCodeRange> uses) {
+		this.def = def;
+		this.uses = uses;
+	}
+
+	public void addUse(SourceCodeRange scr) {
+		if (uses.contains(scr))
+			return;
+		uses.add(scr);
+	}
+
+	public boolean equals(Object obj) {
+		if (!(obj instanceof DefUse))
+			return false;
+		DefUse other = (DefUse) obj;
+		if (!def.equals(other.def))
+			return false;
+		if (!uses.equals(other.uses))
+			return false;
+		return true;
+	}
+
+	public SourceCodeRange getDef() {
+		return def;
+	}
+
+	public List<SourceCodeRange> getUses() {
+		return uses;
+	}
+
+	public int hashCode() {
+		return def.hashCode() * 1000 + uses.hashCode();
+	}
+
+	public static Set<SourceCodeRange> getDefs(List<DefUse> dus) {
+		Set<SourceCodeRange> results = new HashSet<SourceCodeRange>();
+		for (DefUse du : dus) {
+			results.add(du.def);
+		}
+		return results;
+	}
+
+	public static DefUse getDefUse(List<DefUse> list, SourceCodeRange def) {
+		for (DefUse du : list) {
+			if (du.def.equals(def))
+				return du;
+		}
+		return null;
+	}
+
+	public static void sort(List<List<DefUse>> list) {
+		for (List<DefUse> defUses : list) {
+			for (DefUse du : defUses) {
+				du.sort();// the order of use sourcecoderange is an
+							// approximation for use reordering
+			}
+		}
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		DefUse other = (DefUse) o;
+		return def.compareTo(other.def);
+	}
+
+	public void sort() {
+		Collections.sort(uses);
+	}
+}

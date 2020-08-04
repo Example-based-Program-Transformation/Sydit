@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/eclipse2/otherPlugins/svnkit/eclipse/plugins/svnkit.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/workspaceForStaticAnalysis/changeassistant/lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/workspaceForStaticAnalysis/changeassistant/lib/netty-3.2.1.Final.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/workspaceForStaticAnalysis/changeassistant/lib/org.apache.servicemix.bundles.jline-0.9.94_1.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/workspaceForStaticAnalysis/changeassistant/lib/org.apache.servicemix.bundles.lucene-3.0.1_2.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/workspaceForStaticAnalysis/changeassistant/lib/protobuf-java-2.3.0.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/workspaceForStaticAnalysis/changeassistant/lib/simpack-647-bin.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/eclipse2/plugins/org.eclipse.jdt.core_3.6.0.v_A58.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/eclipse2/plugins/org.eclipse.jdt_3.6.0.v201006080911.jar"/>
+	<classpathentry kind="lib" path="/Users/mn8247/Software/eclipse-for-demo/otherPlugins/crystal/eclipse/plugins/edu.cmu.cs.planno_1.1.3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ca.mcgill.cs.swevo.ppa"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ca.mcgill.cs.swevo.ppa.tests"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ca.mcgill.cs.swevo.ppa.ui"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ca.mcgill.cs.swevo.ppa.ui.tests"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

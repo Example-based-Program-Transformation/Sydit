@@ -1,0 +1,89 @@
+//win32 org.eclipse.swt.widgets.Display
+public void setSynchronizer (Synchronizer synchronizer) {
+	checkDevice ();
+	if (synchronizer == null) error (SWT.ERROR_NULL_ARGUMENT);
+	Synchronizer oldSynchronizer;
+	synchronized (Device.class) {
+		oldSynchronizer = this.synchronizer;
+		this.synchronizer = synchronizer;
+	}
+	if (oldSynchronizer != null) {
+		oldSynchronizer.runAsyncMessages(true);
+	}
+}
+//end of method
+//carbon org.eclipse.swt.widgets.Display
+public void setSynchronizer (Synchronizer synchronizer) {
+	checkDevice ();
+	if (synchronizer == null) error (SWT.ERROR_NULL_ARGUMENT);
+	if (synchronizer == this.synchronizer) return;
+	Synchronizer oldSynchronizer;
+	synchronized (Device.class) {
+		oldSynchronizer = this.synchronizer;
+		this.synchronizer = synchronizer;
+	}
+	if (oldSynchronizer != null) {
+		oldSynchronizer.runAsyncMessages(true);
+	}
+}
+//end of method
+//gtk org.eclipse.swt.widgets.Display
+public void setSynchronizer (Synchronizer synchronizer) {
+	checkDevice ();
+	if (synchronizer == null) error (SWT.ERROR_NULL_ARGUMENT);
+	if (synchronizer == this.synchronizer) return;
+	Synchronizer oldSynchronizer;
+	synchronized (Device.class) {
+		oldSynchronizer = this.synchronizer;
+		this.synchronizer = synchronizer;
+	}
+	if (oldSynchronizer != null) {
+		oldSynchronizer.runAsyncMessages(true);
+	}
+}
+//end of method
+//motif org.eclipse.swt.widgets.Display
+public void setSynchronizer (Synchronizer synchronizer) {
+	checkDevice ();
+	if (synchronizer == null) error (SWT.ERROR_NULL_ARGUMENT);
+	if (synchronizer == this.synchronizer) return;
+	Synchronizer oldSynchronizer;
+	synchronized (Device.class) {
+		oldSynchronizer = this.synchronizer;
+		this.synchronizer = synchronizer;
+	}
+	if (oldSynchronizer != null) {
+		oldSynchronizer.runAsyncMessages(true);
+	}
+}
+//end of method
+//photon org.eclipse.swt.widgets.Display
+public void setSynchronizer (Synchronizer synchronizer) {
+	checkDevice ();
+	if (synchronizer == null) error (SWT.ERROR_NULL_ARGUMENT);
+	if (synchronizer == this.synchronizer) return;
+	Synchronizer oldSynchronizer;
+	synchronized (Device.class) {
+		oldSynchronizer = this.synchronizer;
+		this.synchronizer = synchronizer;
+	}
+	if (oldSynchronizer != null) {
+		oldSynchronizer.runAsyncMessages(true);
+	}
+}
+//end of method
+//wpf org.eclipse.swt.widgets.Display
+public void setSynchronizer (Synchronizer synchronizer) {
+	checkDevice ();
+	if (synchronizer == null) error (SWT.ERROR_NULL_ARGUMENT);
+	if (synchronizer == this.synchronizer) return;
+	Synchronizer oldSynchronizer;
+	synchronized (Device.class) {
+		oldSynchronizer = this.synchronizer;
+		this.synchronizer = synchronizer;
+	}
+	if (oldSynchronizer != null) {
+		oldSynchronizer.runAsyncMessages(true);
+	}
+}
+//end of method
